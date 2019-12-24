@@ -1,0 +1,83 @@
+using System;
+using System.Linq;
+using App.DL.Enum;
+using App.DL.Repository.Repo;
+using App.DL.Repository.User;
+using Dapper;
+using UserModel = App.DL.Model.User.User;
+
+// ReSharper disable InconsistentNaming
+
+namespace App.DL.Model.Repo {
+    public class Repo : Micron.DL.Model.Model {
+        public int id;
+
+        public int creator_id;
+
+        public string guid;
+
+        public string origin_id;
+
+        public string title;
+
+        public string repo_url;
+
+        public RepoServiceType service_type;
+
+        public DateTime created_at;
+
+        public UserModel Creator() => UserRepository.Find(creator_id);
+
+        public static Repo Find(int id)
+            => Connection().Query<Repo>(
+                "SELECT * FROM repositories WHERE id = @id LIMIT 1",
+                new {id}
+            ).FirstOrDefault();
+
+        public static Repo FindByGuid(string guid)
+            => Connection().Query<Repo>(
+                "SELECT * FROM repositories WHERE guid = @guid LIMIT 1",
+                new {guid}
+            ).FirstOrDefault();
+
+        public static Repo FindBy(string col, string val)
+            => Connection().Query<Repo>(
+                $"SELECT * FROM repositories WHERE {col} = @val LIMIT 1",
+                new {val}
+            ).FirstOrDefault();
+        
+        public static Repo Find(string originId, RepoServiceType type)
+            => Connection().Query<Repo>(
+                $"SELECT * FROM repositories WHERE origin_id = @origin_id AND service_type = '{type.ToString()}' LIMIT 1",
+                new {origin_id = originId}
+            ).FirstOrDefault();
+
+        public static int Create(
+            UserModel creator, string title, string repoUrl, RepoServiceType serviceType, string originId = ""
+        ) {
+            return ExecuteScalarInt(
+                $@"INSERT INTO public.repositories(creator_id, guid, title, repo_url, service_type, origin_id) 
+                        VALUES (@creator_id, @guid, @title, @repo_url, '{serviceType.ToString()}', @origin_id);
+                        SELECT currval('repositories_id_seq');"
+                , new {
+                    creator_id = creator.id, guid = Guid.NewGuid().ToString(), title, repo_url = repoUrl, 
+                    origin_id = originId
+                }
+            );
+        }
+
+        public Repo Save() {
+            ExecuteSql(
+                "UPDATE repositories SET title = @title, repo_url = @repo_url WHERE id = @id",
+                new {title, repo_url, id}
+            );
+            return this;
+        }
+
+        public Project.Project Project() => Model.Project.Project.FindBy("repository_id", id);
+        
+        public Repo Refresh() => RepoRepository.Find(id);
+
+        public void Delete() => ExecuteScalarInt("DELETE FROM repositories WHERE id = @id", new {id});
+    }
+}

@@ -1,0 +1,81 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/repo
+    docker:
+    - image: centos:7
+
+    steps:
+      - checkout
+
+      - run:
+          name: ls
+          command: ls
+
+      - run:
+          name: install git & postgres & sudo
+          command: yum install -y git postgresql postgresql-server sudo
+
+      - run:
+          name: Install initscripts to be able to work with services
+          command: yum install -y initscripts && yum clean all
+
+      - run:
+          name: Add .net core repo
+          command: rpm -Uvh https://packages.microsoft.com/config/rhel/7/packages-microsoft-prod.rpm
+
+      - run:
+          name: yum update
+          command: yum update -y
+
+      - run:
+          name: install php deps
+          command: yum -y install http://rpms.remirepo.net/enterprise/remi-release-7.rpm && yum -y install epel-release yum-utils && yum-config-manager --disable remi-php54 && yum-config-manager --enable remi-php73
+
+      - run:
+          name: install php 
+          command: yum -y install php php-cli php-zip wget unzip php-pgsql
+
+      - run:
+          name: php version
+          command: php -v
+
+      - run:
+          name: install composer
+          command: curl -sS https://getcomposer.org/installer -o composer-setup.php && php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+
+      - run:
+          name: composer version
+          command: composer --version
+
+      - run:
+          name: copy phinx config
+          command: cp .circleci/phinx.yml.testing migrations/phinx.yml
+
+      - run:
+          name: set up postgres
+          command: sudo -u postgres /usr/bin/initdb /var/lib/pgsql/data/ && sudo -u postgres /usr/bin/pg_ctl start -D /var/lib/pgsql/data -s -o "-p 5432" -w -t 300
+
+      - run:
+          name: create database
+          command: sudo -u postgres psql -c 'create database openhub_api_test;'
+
+      - run:
+          name: composer install & migrate
+          command: (cd migrations && composer install) && (cd migrations && php vendor/bin/phinx migrate -e testing)
+
+      - run:
+          name: copy app config
+          command: mkdir -p Tests/bin/Debug/netcoreapp2.2/config && cp .circleci/config.json.testing Tests/bin/Debug/netcoreapp2.2/config/config.json
+
+      - run:
+          name: yum install dotnet core sdk 2.2
+          command: yum install -y dotnet-sdk-2.2
+
+      - run:
+          name: build
+          command: dotnet build
+
+      - run:
+          name: run tests
+          command: dotnet test

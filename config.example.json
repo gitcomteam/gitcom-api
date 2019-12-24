@@ -1,0 +1,33 @@
+{
+    "database": {
+    	"host": "localhost",
+        "name": "openhub_api",
+        "user": "postgres",
+        "port": 5432,
+        "password": "1234"
+    },
+    "auth": {
+        "encryption_key": "J1XRgZ1RCVZZBrk",
+        "jwt": {
+            "secret_key": "GQDstcKsfFe12z2OHg3MfeJ1XT0uFiwDZzVBrk",
+            "token_life_days": 7
+        },
+        "external": {
+            "github": {
+                "client_id": "",
+                "client_secret": ""
+            },
+            "gitlab": {
+                "client_id": "",
+                "client_secret": "",
+                "redirect_url": ""
+            }
+        }
+    },
+    "external":  {
+        "sentry": {
+            "id": "",
+            "key": ""
+        }
+    }
+}
