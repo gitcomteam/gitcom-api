@@ -20,9 +20,10 @@ namespace App.DL.Repository.Card {
             return CardModel.Find(name, creator, column);
         }
 
-        public static CardModel CreateAndGet(string name, string description, int columnOrder, BoardColumnModel column,
-            UserModel creator, UserModel assigned) {
-            return CardModel.Find(CardModel.Create(name, description, columnOrder, column, creator, assigned));
+        public static CardModel CreateAndGet(
+            string name, string description, int columnOrder, BoardColumnModel column, UserModel creator
+        ) {
+            return CardModel.Find(CardModel.Create(name, description, columnOrder, column, creator));
         }
 
         public static CardModel UpdateAndRefresh(CardModel model, JObject data) {
@@ -35,7 +36,6 @@ namespace App.DL.Repository.Card {
             model.name = data.Value<string>("name") ?? model.name;
             model.column_order = data.Value<int?>("column_order") ?? model.column_order;
             model.description = data.Value<string>("description") ?? model.description;
-            model.updated_at = data.Value<DateTime?>("updated_at") ?? model.updated_at;
             return model.Save();
         }
     }

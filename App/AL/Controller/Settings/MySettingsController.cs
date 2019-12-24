@@ -23,9 +23,7 @@ namespace App.AL.Controller.Settings {
                 var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
                     new ShouldHaveParameters(new[] {"key"}),
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var settingKey = GetRequestStr("key");
 
@@ -53,9 +51,7 @@ namespace App.AL.Controller.Settings {
                 var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
                     new ShouldHaveParameters(new[] {"key", "value"}),
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var settingKey = GetRequestStr("key");
 

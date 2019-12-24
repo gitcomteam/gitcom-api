@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using App.DL.Enum;
 using App.DL.Repository.Auth;
@@ -13,7 +14,7 @@ using Newtonsoft.Json.Linq;
 
 namespace App.AL.Controller.Auth.External.Facebook {
     public class FacebookAuthController : BaseController {
-        private const string ApiUrl = "https://graph.facebook.com/v2.3/";
+        private const string ApiUrl = "https://graph.facebook.com/v5.0/";
         
         protected override IMiddleware[] Middleware() => new IMiddleware[] { };
 
@@ -22,9 +23,7 @@ namespace App.AL.Controller.Auth.External.Facebook {
                 var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
                     new ShouldHaveParameters(new[] {"facebook_token"}),
                 });
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var facebookToken = GetRequestStr("facebook_token");
                 

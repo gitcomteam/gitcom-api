@@ -2,17 +2,20 @@
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Threading.Tasks;
 using App.AL;
 using App.AL.Config.CLI;
 using App.AL.Middleware;
 using Micron.DL.Module.CLI;
 using Micron.DL.Module.Config;
+using Micron.DL.Module.Db;
 using Micron.DL.Module.Http;
 using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Configuration;
 using Nancy.Hosting.Self;
 using Nancy.TinyIoc;
+using Npgsql;
 using Sentry;
 
 namespace App {
@@ -37,13 +40,13 @@ namespace App {
 
             try {
                 exception.Data.Add("request_url", context.Request.Url.ToString());
-
-                SentrySdk.CaptureException(exception);
                 
                 Program.logWriter.WriteLine(DateTime.Now.ToString(CultureInfo.InvariantCulture));
                 Program.logWriter.WriteLine(exception);
                 Program.logWriter.WriteLine(exception.StackTrace);
                 Program.logWriter.WriteLine("----------");
+                
+                SentrySdk.CaptureException(exception);
             }
             catch (Exception e) {
                 Console.WriteLine(e.Message);

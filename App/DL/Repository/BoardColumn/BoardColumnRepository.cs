@@ -1,6 +1,3 @@
-using App.AL.Utils.Entity;
-using App.DL.Enum;
-using App.DL.Repository.User;
 using Newtonsoft.Json.Linq;
 using BoardColumnModel = App.DL.Model.BoardColumn.BoardColumn;
 using BoardModel = App.DL.Model.Board.Board;

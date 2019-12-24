@@ -21,9 +21,7 @@ namespace App.AL.Controller.Auth {
                     new MinLength("email", 4),
                     new MinLength("password", 4)
                 });
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
                 
                 var password = (string) Request.Query["password"];
 

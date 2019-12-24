@@ -18,7 +18,7 @@ namespace Tests.App.DL.Model.Card {
             var name = "testName" + Rand.Int();
             var columnOrder = Rand.IntRange(1, 30);
             
-            var card = CardRepository.CreateAndGet(name, "",columnOrder, column, user, user);
+            var card = CardRepository.CreateAndGet(name, "",columnOrder, column, user);
             card = CardRepository.Find(name, user, column);
             Assert.AreEqual(card.name, name);
             Assert.AreEqual(card.column_id, column.id);

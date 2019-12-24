@@ -36,9 +36,7 @@ namespace App.AL.Controller.Auth.External.GitLab {
                 var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
                     new ShouldHaveParameters(new[] {"access_token"}),
                 });
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
                 
                 var accessToken = GetRequestStr("access_token");
 

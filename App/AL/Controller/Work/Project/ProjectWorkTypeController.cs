@@ -17,9 +17,7 @@ namespace App.AL.Controller.Work.Project {
                     new ShouldHaveParameters(new[] {"project_guid"}),
                     new ExistsInTable("project_guid", "projects", "guid")
                 });
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var project = ProjectRepository.FindByGuid(GetRequestStr("project_guid"));
 

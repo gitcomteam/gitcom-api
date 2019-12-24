@@ -17,9 +17,7 @@ namespace App.AL.Controller.Work.Card {
                     new ShouldHaveParameters(new[] {"card_guid"}),
                     new ExistsInTable("card_guid", "cards", "guid")
                 });
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var card = CardRepository.FindByGuid(GetRequestStr("card_guid"));
 

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Net.Http;
 using App.DL.Enum;
+using App.DL.Model.Auth;
 using App.DL.Repository.Auth;
 using App.DL.Repository.User;
 using Micron.DL.Middleware;
@@ -66,8 +67,9 @@ namespace App.AL.Controller.Auth.external.github {
                 
                 var user = UserRepository.FindByEmail(githubUser.Email) ?? UserRepository.FindOrCreateByEmailAndLogin(githubUser.Email, githubUser.Login);
 
-                ServiceAccessTokenRepository.FindOrUpdateAccessToken(user, accessToken, ServiceType.GitHub);
-
+                var tokenModel = ServiceAccessTokenRepository.FindOrUpdateAccessToken(user, accessToken, ServiceType.GitHub);
+                tokenModel.UpdateCol("origin_user_id", githubUser.Id.ToString());
+                
                 return HttpResponse.Data(new JObject() {
                     ["token"] = Jwt.FromUserId(user.id)
                 });

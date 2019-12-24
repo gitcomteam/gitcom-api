@@ -1,4 +1,3 @@
-using System;
 using App.AL.Validation.Permission;
 using App.DL.Enum;
 using App.DL.Repository.BoardColumn;
@@ -28,23 +27,19 @@ namespace App.AL.Controller.Card {
                 var board = column.Board();
                 
                 var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
-                    new ShouldHaveParameters(new[] {"name", "column_guid", "creator_guid", "column_order"}),
+                    new ShouldHaveParameters(new[] {"name", "column_guid"}),
                     new ExistsInTable("column_guid", "board_columns", "guid"),
-                    new ExistsInTable("creator_guid", "users", "guid"),
                     new HasPermission(me, board.id, EntityType.Board)
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
                 var description = (string) Request.Query["description"] ?? "";
-                int columnOrder = Request.Query["column_order"]; 
+                int columnOrder = Request.Query["column_order"] ?? 0; 
 
                 var card = CardRepository.CreateAndGet(
                     (string) Request.Query["name"],
                     description,
                     columnOrder,
                     column,
-                    me,
                     me
                 );
 
@@ -62,17 +57,13 @@ namespace App.AL.Controller.Card {
                     new ExistsInTable("card_guid", "cards", "guid"),
                     new HasPermission(me, card.id, EntityType.Card)
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 card = CardRepository.UpdateAndRefresh(card, new JObject() {
                     ["name"] = GetRequestStr("name"),
                     ["description"] = GetRequestStr("description"),
                     ["column_order"] = GetRequestStr("column_order"),
-                    ["assigned_guid"] = GetRequestStr("assigned_guid"),
                     ["column_guid"] = GetRequestStr("column_guid"),
-                    ["updated_at"] = DateTime.Now
                 });
 
                 return HttpResponse.Item("card", new CardTransformer().Transform(card));
@@ -87,9 +78,7 @@ namespace App.AL.Controller.Card {
                     new ExistsInTable("card_guid", "cards", "guid"),
                     new HasPermission(me, card.id, EntityType.Card)
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 card.Delete();
 

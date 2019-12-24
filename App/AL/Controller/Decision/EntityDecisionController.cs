@@ -24,9 +24,7 @@ namespace App.AL.Controller.Decision {
                 };
 
                 var errors = ValidationProcessor.Process(Request, rules, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var entityType = (EntityType) GetRequestEnum("entity_type", typeof(EntityType));
 

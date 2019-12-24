@@ -30,7 +30,7 @@ namespace Tests.App.AL.Controller.Board {
                 with.Query("creator_guid", creator.guid);
                 with.Query("project_guid", project.guid);
             }).Result;
-
+            
             Assert.AreEqual(HttpStatusCode.Created, result.StatusCode);
 
             var json = JObject.Parse(result.Body.AsString());

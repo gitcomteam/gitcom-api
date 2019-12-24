@@ -30,9 +30,7 @@ namespace App.AL.Controller.ProjectTeamMember {
                     new ExistsInTable("user_guid", "users", "guid"),
                     new HasPermission(me, project.id, EntityType.Project),
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
                 
                 var user = UserRepository.FindByGuid(GetRequestStr("user_guid"));
 
@@ -55,9 +53,7 @@ namespace App.AL.Controller.ProjectTeamMember {
                     new ExistsInTable("user_guid", "users", "guid"),
                     new HasPermission(me, project.id, EntityType.Project)
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var projectTeamMember = ProjectTeamMemberRepository.FindByProjectAndUser(
                     GetRequestStr("project_guid"),

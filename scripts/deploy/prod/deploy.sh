@@ -19,6 +19,8 @@ df -h
 
 free -m
 
+docker images -q |xargs docker rmi -f
+
 sleep 2
 
 curl -I https://api.gitcom.org/version

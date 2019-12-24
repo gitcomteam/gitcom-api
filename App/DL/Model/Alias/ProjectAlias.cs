@@ -57,6 +57,8 @@ namespace App.DL.Model.Alias {
                 new {val, id}
             );
         }
+        
+        public void Delete() => ExecuteScalarInt("DELETE FROM project_aliases WHERE id = @id", new {id});
 
         public Project.Project Project() => ProjectRepository.Find(project_id);
     }

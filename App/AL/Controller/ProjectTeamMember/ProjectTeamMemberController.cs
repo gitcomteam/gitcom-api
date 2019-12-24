@@ -18,9 +18,7 @@ namespace App.AL.Controller.ProjectTeamMember {
                     new ExistsInTable("project_guid", "projects", "guid"),
                     new ExistsInTable("user_guid", "users", "guid")
                 });
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var project = ProjectRepository.FindByGuid(GetRequestStr("project_guid"));
                 var user = UserRepository.FindByGuid(GetRequestStr("user_guid"));

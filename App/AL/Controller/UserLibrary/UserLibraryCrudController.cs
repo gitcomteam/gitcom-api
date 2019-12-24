@@ -10,6 +10,7 @@ using Micron.DL.Module.Controller;
 using Micron.DL.Module.Http;
 using Micron.DL.Module.Validator;
 using Nancy;
+using Newtonsoft.Json.Linq;
 
 namespace App.AL.Controller.UserLibrary {
     public class UserLibraryCrudController : BaseController {
@@ -25,15 +26,31 @@ namespace App.AL.Controller.UserLibrary {
 
                 return HttpResponse.Item("library_projects", new UserLibraryItemTransformer().Many(items));
             });
+            
+            Get("/api/v1/me/library/project/status/get", _ => {
+                var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
+                    new ExistsInTable("project_guid", "projects", "guid")
+                });
+                if (errors.Count > 0) {
+                    return HttpResponse.Errors(errors);
+                }
+
+                var me = UserRepository.Find(CurrentRequest.UserId);
+                var project = ProjectRepository.FindByGuid(GetRequestStr("project_guid"));
+
+                return HttpResponse.Data(new JObject() {
+                    ["status"] = new JObject() {
+                        ["in_library"] = project.InLibrary(me)
+                    }
+                });
+            });
 
             Get("/api/v1/me/library/project/get", _ => {
                 var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
                     new ShouldHaveParameters(new[] {"project_guid"}),
                     new ExistsInTable("project_guid", "projects", "guid")
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var me = UserRepository.Find(CurrentRequest.UserId);
                 var project = ProjectRepository.FindByGuid(GetRequestStr("project_guid"));
@@ -51,9 +68,7 @@ namespace App.AL.Controller.UserLibrary {
                     new ShouldHaveParameters(new[] {"project_guid"}),
                     new ExistsInTable("project_guid", "projects", "guid"),
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var me = UserRepository.Find(CurrentRequest.UserId);
                 var project = ProjectRepository.FindByGuid(GetRequestStr("project_guid"));
@@ -70,9 +85,7 @@ namespace App.AL.Controller.UserLibrary {
                     new ShouldHaveParameters(new[] {"project_guid"}),
                     new ExistsInTable("project_guid", "projects", "guid")
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var me = UserRepository.Find(CurrentRequest.UserId);
 

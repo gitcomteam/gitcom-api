@@ -12,6 +12,7 @@ namespace App.PL.Transformer.Project {
                 ["repository_guid"] = item.Repository()?.guid,
                 ["creator_guid"] = item.Creator()?.guid,
                 ["base_uri"] = null,
+                ["stars_count"] = item.StarsCount(), // TODO: optimize
                 ["created_at"] = item.created_at.ToString("d"),
                 ["updated_at"] = item.created_at.ToString("d")
             };

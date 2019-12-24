@@ -32,9 +32,7 @@ namespace App.AL.Controller.Funding.Invoice {
                     new EntityShouldExist(),
                     new UserActiveInvoicesLimit(me, InvoiceConfig.UserActiveInvoicesLimit),
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
                 
                 var entityType = (EntityType) GetRequestEnum("entity_type", typeof(EntityType));
 
@@ -67,9 +65,7 @@ namespace App.AL.Controller.Funding.Invoice {
                         "invoice_guid", "invoices", "guid", "user_id", me.id.ToString()
                     )
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
                 
                 return HttpResponse.Item("invoice", new InvoiceTransformer().Transform(
                     InvoiceRepository.FindByGuid(GetRequestStr("invoice_guid"))
@@ -105,9 +101,7 @@ namespace App.AL.Controller.Funding.Invoice {
                         "invoice_guid", "invoices", "guid", "user_id", me.id.ToString()
                     )
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
                 
                 var newStatus = (InvoiceStatus) GetRequestEnum("status", typeof(InvoiceStatus));
                 

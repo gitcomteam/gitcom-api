@@ -23,9 +23,7 @@ namespace App.AL.Controller.Funding.Balance {
                     new ShouldBeCorrectEnumValue("entity_type", typeof(EntityType)),
                     new EntityShouldExist(),
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var entityType = (EntityType) GetRequestEnum("entity_type", typeof(EntityType));
                 

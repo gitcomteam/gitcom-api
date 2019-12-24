@@ -7,7 +7,7 @@ namespace Tests.Utils.DB {
         public static string tablesToCleanUp = "";
         
         public static void TruncateAll() {
-            var connection = DbConnection.Connection();
+            var connection = DbConnection.RootConnection();
             
             if (tablesToCleanUp == "") {
                 var tables = connection.Query<string>(

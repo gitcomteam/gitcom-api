@@ -22,9 +22,7 @@ namespace App.AL.Controller.Auth.External.Google {
                 var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
                     new ShouldHaveParameters(new[] {"google_token"}),
                 });
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var googleToken = GetRequestStr("google_token");
                 

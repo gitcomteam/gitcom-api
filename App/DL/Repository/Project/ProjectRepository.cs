@@ -1,6 +1,5 @@
-using App.AL.Utils.Work;
+using App.AL.Tasks.Project;
 using App.DL.Repository.ProjectTeamMember;
-using Newtonsoft.Json.Linq;
 using UserModel = App.DL.Model.User.User;
 using ProjectModel = App.DL.Model.Project.Project;
 using RepoModel = App.DL.Model.Repo.Repo;
@@ -21,16 +20,11 @@ namespace App.DL.Repository.Project {
 
         public static ProjectModel[] GetNewest() => ProjectModel.GetNewest();
 
-        public static ProjectModel CreateAndGet(string name, UserModel creator, RepoModel repository) {
-            var project = ProjectModel.Find(ProjectModel.Create(name, creator, repository));
-            ProjectTeamMemberRepository.CreateAndGet(project, creator);
-            ProjectWorkUtils.SetUp(project);
+        public static ProjectModel FindOrCreate(string name, UserModel creator, RepoModel repository) {
+            var project = ProjectModel.FindBy("repository_id", repository.id) ??
+                          ProjectModel.Find(ProjectModel.Create(name, creator, repository));
+            ProjectSetUp.Run(project, creator);
             return project;
-        }
-
-        public static ProjectModel UpdateAndRefresh(ProjectModel model, JObject data) {
-            model.name = data.Value<string>("name") ?? model.name;
-            return model.Save();
         }
 
         public static void Delete(ProjectModel project) {
@@ -38,6 +32,9 @@ namespace App.DL.Repository.Project {
             foreach (var member in teamMembers) {
                 member.Delete();
             }
+
+            project.Alias()?.Delete();
+
             project.Delete();
         }
     }

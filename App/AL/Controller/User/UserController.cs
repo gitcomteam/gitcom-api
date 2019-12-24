@@ -17,9 +17,7 @@ namespace App.AL.Controller.Home {
                     new ShouldHaveParameters(new[] {"user_guid"}),
                     new ExistsInTable("user_guid", "users", "guid")
                 });
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
                 
                 var user = UserRepository.FindByGuid(GetRequestStr("user_guid"));
                 return HttpResponse.Item("me", new UserTransformer().Transform(user));

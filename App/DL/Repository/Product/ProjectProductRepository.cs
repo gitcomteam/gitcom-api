@@ -3,6 +3,8 @@ using App.DL.Model.Product;
 namespace App.DL.Repository.Product {
     public static class ProjectProductRepository {
         public static ProjectProduct Find(int id) => ProjectProduct.Find(id);
+        
+        public static ProjectProduct[] Get(Model.Project.Project project) => ProjectProduct.Get(project);
 
         public static ProjectProduct FindBy(string col, string val) => ProjectProduct.FindBy(col, val);
 

@@ -15,9 +15,7 @@ namespace App.AL.Controller.Repo {
                 var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
                     new ExistsInTable("repo_guid", "repositories", "guid"),
                 });
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 return HttpResponse.Item("repository", new RepoTransformer().Transform(
                     RepoRepository.FindByGuid((string) Request.Query["repo_guid"])

@@ -16,9 +16,7 @@ namespace App.AL.Controller.Alias.Project {
                 var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
                     new ShouldHaveParameters(new[] {"owner", "alias"})
                 });
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var alias = ProjectAliasRepository.FindByAlias(
                     GetRequestStr("owner"), GetRequestStr("alias")

@@ -18,9 +18,7 @@ namespace App.AL.Controller.Card {
                     new ShouldHaveParameter("card_guid"),
                     new ExistsInTable("card_guid", "cards", "guid")
                 });
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 return HttpResponse.Item("card", new CardTransformer().Transform(
                     CardRepository.FindByGuid((string) Request.Query["card_guid"])
@@ -32,9 +30,7 @@ namespace App.AL.Controller.Card {
                     new ShouldHaveParameter("column_guid"),
                     new ExistsInTable("column_guid", "board_columns", "guid")
                 });
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var column = BoardColumnRepository.FindByGuid(GetRequestStr("column_guid"));
                 

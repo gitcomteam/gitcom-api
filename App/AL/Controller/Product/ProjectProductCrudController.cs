@@ -31,9 +31,7 @@ namespace App.AL.Controller.Product {
                     new ExistsInTable("project_guid", "projects", "guid"),
                     new HasPermission(me, EntityUtils.GetEntityId(projectGuid, EntityType.Project), EntityType.Project)
                 });
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var project = ProjectRepository.FindByGuid(GetRequestStr("project_guid"));
 
@@ -70,9 +68,7 @@ namespace App.AL.Controller.Product {
                     new ExistsInTable("product_guid", "project_products", "guid"),
                     new HasPermission(me, product.project_id, EntityType.Project)
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 if (!String.IsNullOrEmpty(GetRequestStr("name"))) {
                     product.UpdateCol("name", GetRequestStr("name"));
@@ -114,9 +110,7 @@ namespace App.AL.Controller.Product {
                     new ExistsInTable("product_guid", "project_products", "guid"),
                     new HasPermission(me, product?.project_id ?? 0, EntityType.Project)
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
                 
                 product?.Delete();
                 
