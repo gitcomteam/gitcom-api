@@ -33,13 +33,12 @@ namespace App.AL.Controller.Auth.external.github {
             Get("/api/v1/auth/github/get_auth_token", _ => {
                 var responseBody = "";
                 var code = GetRequestStr("code");
-                
-                using (var client = new HttpClient())
-                {
+
+                using (var client = new HttpClient()) {
                     client.DefaultRequestHeaders.Add("Accept", "application/json");
-                    
+
                     var response = client.PostAsync(
-                        "https://github.com/login/oauth/access_token", 
+                        "https://github.com/login/oauth/access_token",
                         new FormUrlEncodedContent(new[] {
                             new KeyValuePair<string, string>("client_id", clientId),
                             new KeyValuePair<string, string>("client_secret", clientSecret),
@@ -56,20 +55,26 @@ namespace App.AL.Controller.Auth.external.github {
                 var accessToken = json.Value<string>("access_token");
 
                 if (accessToken == null) {
-                    return HttpResponse.Error(HttpStatusCode.Unauthorized, "We're unable to get your access token, please try again");
+                    return HttpResponse.Error(HttpStatusCode.Unauthorized,
+                        "We're unable to get your access token, please try again");
                 }
-                
+
                 var githubClient = new GitHubClient(new ProductHeaderValue("SupportHub"));
-                
+
                 githubClient.Credentials = new Credentials(accessToken);
 
                 var githubUser = githubClient.User.Current().Result;
-                
-                var user = UserRepository.FindByEmail(githubUser.Email) ?? UserRepository.FindOrCreateByEmailAndLogin(githubUser.Email, githubUser.Login);
 
-                var tokenModel = ServiceAccessTokenRepository.FindOrUpdateAccessToken(user, accessToken, ServiceType.GitHub);
+                var user = UserRepository.FindByEmail(githubUser.Email) ??
+                           UserRepository.FindOrCreateByEmailAndLogin(
+                               githubUser.Email, githubUser.Login, null,
+                               UserRepository.FindByGuid(GetRequestStr("referral_key"))
+                           );
+
+                var tokenModel =
+                    ServiceAccessTokenRepository.FindOrUpdateAccessToken(user, accessToken, ServiceType.GitHub);
                 tokenModel.UpdateCol("origin_user_id", githubUser.Id.ToString());
-                
+
                 return HttpResponse.Data(new JObject() {
                     ["token"] = Jwt.FromUserId(user.id)
                 });

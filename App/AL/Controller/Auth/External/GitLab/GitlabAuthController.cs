@@ -37,7 +37,7 @@ namespace App.AL.Controller.Auth.External.GitLab {
                     new ShouldHaveParameters(new[] {"access_token"}),
                 });
                 if (errors.Count > 0) return HttpResponse.Errors(errors);
-                
+
                 var accessToken = GetRequestStr("access_token");
 
                 var client = new GitLabClient(accessToken);
@@ -47,9 +47,15 @@ namespace App.AL.Controller.Auth.External.GitLab {
                     return HttpResponse.Error(HttpStatusCode.Unauthorized,
                         "We're unable to get your access token, please try again");
                 }
-                
-                var user = UserRepository.FindByEmail(client.User.Email) ?? UserRepository.FindOrCreateByEmailAndLogin(client.User.Email, client.User.Login);
-                
+
+                var user = UserRepository.FindByEmail(client.User.Email) ??
+                           UserRepository.FindOrCreateByEmailAndLogin(
+                               client.User.Email,
+                               client.User.Login,
+                               null,
+                               UserRepository.FindByGuid(GetRequestStr("referral_key"))
+                           );
+
                 ServiceAccessTokenRepository.FindOrUpdateAccessToken(user, accessToken, ServiceType.GitLab);
 
                 return HttpResponse.Data(new JObject() {

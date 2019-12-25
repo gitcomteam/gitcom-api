@@ -1,4 +1,5 @@
 using App.DL.Module.Cache;
+using App.DL.Repository.User.Referral;
 using Micron.DL.Module.Misc;
 using UserModel = App.DL.Model.User.User;
 
@@ -30,7 +31,9 @@ namespace App.DL.Repository.User {
             return item;
         }
 
-        public static UserModel FindOrCreateByEmailAndLogin(string email, string login, string password = null) {
+        public static UserModel FindOrCreateByEmailAndLogin(
+            string email, string login, string password = null, UserModel referral = null
+        ) {
             password ??= Rand.RandomString();
             
             var user = UserModel.FindByEmail(email);
@@ -47,6 +50,8 @@ namespace App.DL.Repository.User {
             }
             
             user ??= Create(email, login, password);
+
+            if (referral != null) UserReferralRepository.Create(user, referral);
             
             return user;
         }

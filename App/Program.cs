@@ -2,20 +2,17 @@
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Threading.Tasks;
 using App.AL;
 using App.AL.Config.CLI;
 using App.AL.Middleware;
 using Micron.DL.Module.CLI;
 using Micron.DL.Module.Config;
-using Micron.DL.Module.Db;
 using Micron.DL.Module.Http;
 using Nancy;
 using Nancy.Bootstrapper;
 using Nancy.Configuration;
 using Nancy.Hosting.Self;
 using Nancy.TinyIoc;
-using Npgsql;
 using Sentry;
 
 namespace App {
