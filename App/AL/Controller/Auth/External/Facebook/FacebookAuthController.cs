@@ -15,7 +15,7 @@ using Newtonsoft.Json.Linq;
 namespace App.AL.Controller.Auth.External.Facebook {
     public class FacebookAuthController : BaseController {
         private const string ApiUrl = "https://graph.facebook.com/v5.0/";
-        
+
         protected override IMiddleware[] Middleware() => new IMiddleware[] { };
 
         public FacebookAuthController() {
@@ -26,21 +26,27 @@ namespace App.AL.Controller.Auth.External.Facebook {
                 if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var facebookToken = GetRequestStr("facebook_token");
-                
+
                 var response = new HttpClient().GetAsync(
                     ApiUrl + $"me?access_token={facebookToken}&fields=name,email"
                 ).Result;
                 if (!response.IsSuccessStatusCode) {
                     return HttpResponse.Error(HttpStatusCode.BadRequest, "Invalid facebook token");
                 }
+
                 var json = JObject.Parse(response.Content.ReadAsStringAsync().Result);
 
                 var email = json.Value<string>("email");
                 var login = email.Split("@")[0];
 
-                var user = UserRepository.FindByEmail(email) ?? UserRepository.FindOrCreateByEmailAndLogin(email, login);
+                var user = UserRepository.FindByEmail(email) ??
+                           UserRepository.FindOrCreateByEmailAndLogin(
+                               email, login, null,
+                               UserRepository.FindByGuid(GetRequestStr("referral_key"))
+                           );
 
-                var accessToken = ServiceAccessTokenRepository.FindOrUpdateAccessToken(user, facebookToken, ServiceType.Facebook);
+                var accessToken =
+                    ServiceAccessTokenRepository.FindOrUpdateAccessToken(user, facebookToken, ServiceType.Facebook);
                 accessToken.UpdateCol("origin_user_id", json.Value<string>("id"));
 
                 return HttpResponse.Data(new JObject() {
