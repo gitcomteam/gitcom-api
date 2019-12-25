@@ -20,14 +20,17 @@ namespace App.DL.Repository.User {
         public static UserModel FindByEmail(string email) {
             return UserModel.FindByEmail(email);
         }
+        
+        public static UserModel FindByLogin(string login) {
+            return UserModel.FindByLogin(login);
+        }
 
         public static UserModel FindByGuid(string guid) {
             var cached = ModelCache.Get("User", guid);
-            if (cached != null) {
-                return (UserModel) cached;
-            }
+            if (cached != null) return (UserModel) cached;
+            
             var item= UserModel.FindByGuid(guid);
-            ModelCache.Store("User", item.guid, item);
+            if (item != null) ModelCache.Store("User", item.guid, item);
             return item;
         }
 
