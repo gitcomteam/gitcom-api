@@ -56,13 +56,13 @@ namespace App {
 
     class Program {
         public static StreamWriter logWriter = File.AppendText("error.log");
-        
+
         static void Main() {
             var sentryKey = AppConfig.GetConfiguration("external:sentry:key");
             var sentryId = AppConfig.GetConfiguration("external:sentry:id");
-            
+
             var hostUri = AppConfig.GetConfiguration("server:host_uri") ?? "http://localhost:8000";
-            
+
             using (SentrySdk.Init($"https://{sentryKey}@sentry.io/{sentryId}")) {
                 var host = new NancyHost(new Bootstrapper(), new Uri(hostUri));
 
