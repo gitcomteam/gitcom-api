@@ -31,9 +31,7 @@ namespace App.AL.Controller.Board {
                     new ExistsInTable("project_guid", "projects", "guid"),
                     new HasPermission(me, project.id, EntityType.Project)
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var board = BoardRepository.CreateAndGet(
                     (string) Request.Query["name"],
@@ -56,9 +54,7 @@ namespace App.AL.Controller.Board {
                     new ExistsInTable("board_guid", "boards", "guid"),
                     new HasPermission(me, board.id, EntityType.Board)
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 board = BoardRepository.UpdateAndRefresh(board, new JObject() {
                     ["name"] = GetRequestStr("name"),
@@ -78,9 +74,7 @@ namespace App.AL.Controller.Board {
                     new ExistsInTable("board_guid", "boards", "guid"),
                     new HasPermission(me, board.id, EntityType.Board)
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 board.Delete();
 

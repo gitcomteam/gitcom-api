@@ -21,9 +21,7 @@ namespace App.AL.Controller.Work.Card {
                     new ExistsInTable("card_guid", "cards", "guid"),
                     new ExistsInTable("work_type_guid", "project_work_types", "guid"),
                 });
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var me = UserRepository.Find(CurrentRequest.UserId);
 

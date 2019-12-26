@@ -61,7 +61,7 @@ namespace App.AL.Utils.External.GitHub {
 
             User creator = externalRepo.Owner.Id == Convert.ToInt64(originUserId) ? me : null;
 
-            var project = ProjectRepository.CreateAndGet(repository.title, creator, repository);
+            var project = ProjectRepository.FindOrCreate(repository.title, creator, repository);
 
             project.UpdateCol("description", externalRepo.Description);
             

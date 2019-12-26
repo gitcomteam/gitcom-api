@@ -47,18 +47,8 @@ namespace App.DL.Model.Card {
         }
 
         public static int Create(
-            string name, string description, int columnOrder, BoardColumnModel column, UserModel creator,
-            UserModel assigned
+            string name, string description, int columnOrder, BoardColumnModel column, UserModel creator
         ) {
-            int assignedId;
-
-            if (assigned == null) {
-                assignedId = 0;
-            }
-            else {
-                assignedId = assigned.id;
-            }
-
             return ExecuteScalarInt(
                 @"INSERT INTO cards(guid, name, description, column_order, column_id, creator_id) 
                 VALUES (@guid, @name, @description, @column_order, @column_id, @creator_id); SELECT currval('cards_id_seq');"

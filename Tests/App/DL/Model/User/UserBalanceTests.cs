@@ -33,16 +33,11 @@ namespace Tests.App.DL.Model.User {
             var user = UserFaker.Create();
 
             var amount = Rand.SmallDecimal();
+            
+            UserBalanceFaker.Create(user, amount);
 
             var balances = UserBalance.GetPositive(user);
             
-            Assert.Zero(balances.Length);
-
-            UserBalanceFaker.Create(user, amount);
-
-            balances = UserBalance.GetPositive(user);
-            
-            Assert.AreEqual(1, balances.Length);
             Assert.AreEqual(amount, balances[0].balance);
         }
     }

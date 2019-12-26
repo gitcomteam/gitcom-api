@@ -9,7 +9,7 @@ namespace Tests.App.AL.Utils.Work {
     public class ProjectWorkUtilsTests : BaseTestFixture {
         [Test]
         public void SetUp_DataCorrect_WorkTypesCreated() {
-            var project = ProjectRepository.CreateAndGet(
+            var project = ProjectRepository.FindOrCreate(
                 "tst project", UserFaker.Create(), RepoFaker.Create()
             );
             

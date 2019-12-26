@@ -62,7 +62,7 @@ namespace App.AL.Utils.External.GitLab {
                 }
             }
             
-            var project = ProjectRepository.CreateAndGet(repository.title, creator, repository);
+            var project = ProjectRepository.FindOrCreate(repository.title, creator, repository);
 
             project.UpdateCol("description", gitLabProject.Value<string>("description"));
             

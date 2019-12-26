@@ -2,6 +2,7 @@ using App.AL.Utils.Entity;
 using App.DL.Enum;
 using App.DL.Model.User;
 using App.DL.Repository.Board;
+using App.DL.Repository.BoardColumn;
 using App.DL.Repository.Project;
 using App.DL.Repository.ProjectTeamMember;
 using App.DL.Repository.Card;
@@ -12,38 +13,33 @@ namespace App.AL.Utils.Permission {
             if (!EntityUtils.IsEntityExists(entityId, entityType)) {
                 return false;
             }
-
             switch (entityType) {
-
                 case EntityType.Project:
                     var project = ProjectRepository.Find(entityId);
-                    if (project == null) {
-                        break;
-                    }
-                    if (ProjectTeamMemberRepository.IsExists(project, user)) {
+                    if (project != null && ProjectTeamMemberRepository.IsExists(project, user)) {
                         return true;
                     }
                     break;
                 case EntityType.Board:
                     var board = BoardRepository.Find(entityId);
-                    if (board == null) {
-                        break;
+                    if (board != null && ProjectTeamMemberRepository.IsExists(board.Project(), user)) {
+                        return true;
                     }
-                    if (ProjectTeamMemberRepository.IsExists(board.Project(), user)) {
+                    break;
+                case EntityType.BoardColumn:
+                    var column = BoardColumnRepository.Find(entityId);
+                    if (column != null && ProjectTeamMemberRepository.IsExists(column.Board().Project(), user)) {
                         return true;
                     }
                     break;
                 case EntityType.Card:
                     var card = CardRepository.Find(entityId);
-                    if (card == null) {
-                        break;
-                    }
-                    if (ProjectTeamMemberRepository.IsExists(card.Column().Board().Project(), user)) {
+                    // TODO: optimize?
+                    if (card != null && ProjectTeamMemberRepository.IsExists(card.Column().Board().Project(), user)) {
                         return true;
                     }
                     break;
             }
-
             return false;
         }
 

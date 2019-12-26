@@ -8,6 +8,9 @@ using UserModel = App.DL.Model.User.User;
 using Dapper;
 using App.DL.Model.Alias;
 using App.DL.Repository.Alias;
+using App.DL.Repository.Project;
+using App.DL.Repository.Product;
+using App.DL.Model.Product;
 
 // ReSharper disable InconsistentNaming
 
@@ -91,6 +94,8 @@ namespace App.DL.Model.Project {
             return this;
         }
 
+        public Project Refresh() => ProjectRepository.Find(id);
+
         public Repo.Repo Repository() => RepoRepository.Find(repository_id);
 
         public User.User Creator() => UserRepository.Find(creator_id);
@@ -108,6 +113,18 @@ namespace App.DL.Model.Project {
                 @"SELECT * FROM project_work_types WHERE project_id = @project_id LIMIT @limit",
                 new {project_id = id, limit}
             ).ToArray();
+
+        public ProjectProduct[] Products() => ProjectProductRepository.Get(this);
+
+        public bool InLibrary(UserModel user)
+            => Connection().ExecuteScalar<int>(
+                   @"SELECT COUNT(*) FROM user_projects_library 
+                    WHERE project_id = @project_id AND user_id = @user_id LIMIT 1"
+                   , new {project_id = id, user_id = user.id}
+               ) > 0;
+
+        public int StarsCount() =>
+            ExecuteScalarInt("SELECT COUNT(*) FROM user_projects_library WHERE project_id = @id", new {id});
 
         public void Delete() => ExecuteScalarInt("DELETE FROM projects WHERE id = @id", new {id});
     }

@@ -15,7 +15,6 @@ namespace Tests.Utils.Fake.Card {
                 "description" + Rand.SmallInt(),
                 Rand.IntRange(0, 100),
                 BoardColumnFaker.Create(user),
-                user,
                 user
             );
         }

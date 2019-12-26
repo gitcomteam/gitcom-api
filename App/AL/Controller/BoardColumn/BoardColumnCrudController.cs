@@ -31,9 +31,7 @@ namespace App.AL.Controller.BoardColumn {
                     new ExistsInTable("board_guid", "boards", "guid"),
                     new HasPermission(me, board.Project().id, EntityType.Project)
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var boardOrder = (short) Request.Query["board_order"];
 
@@ -64,9 +62,7 @@ namespace App.AL.Controller.BoardColumn {
                     new ExistsInTable("board_column_guid", "board_columns", "guid"),
                     new HasPermission(me, boardColumn.Board().id, EntityType.Board)
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
                 
                 if (BoardColumnRepository.Find(board,  Convert.ToInt16(GetRequestStr("board_order"))) != null)
                 {
@@ -91,9 +87,7 @@ namespace App.AL.Controller.BoardColumn {
                     new ExistsInTable("board_column_guid", "board_columns", "guid"),
                     new HasPermission(me, boardColumn.Board().id, EntityType.Board)
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 boardColumn.Delete();
 

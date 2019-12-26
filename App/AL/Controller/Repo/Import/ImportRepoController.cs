@@ -27,9 +27,7 @@ namespace App.AL.Controller.Repo.Import {
                     new ShouldHaveParameters(new[] {"service_type", "origin_id"}),
                     new ShouldBeCorrectEnumValue("service_type", typeof(RepoServiceType))
                 }, true);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var originId = GetRequestStr("origin_id");
 
@@ -37,11 +35,11 @@ namespace App.AL.Controller.Repo.Import {
                     (RepoServiceType) GetRequestEnum("service_type", typeof(RepoServiceType));
 
                 var existingRepo = RepoRepository.Find(originId, serviceType);
-                
+
                 if (existingRepo != null) {
                     return HttpResponse.Error(HttpStatusCode.UnprocessableEntity, "Project is already imported",
                         new JObject() {
-                            ["project_guid"] = existingRepo.Project().guid
+                            ["project"] = new ProjectTransformer().Transform(existingRepo.Project()),
                         });
                 }
 
@@ -68,6 +66,10 @@ namespace App.AL.Controller.Repo.Import {
                     case RepoServiceType.GitLab:
                         result = GitLabRepositoriesUtils.ImportProject(me, originId);
                         break;
+                }
+
+                if (result.project == null || result.repo == null) {
+                    return HttpResponse.Error(HttpStatusCode.BadRequest, "Cannot import target project");
                 }
 
                 return HttpResponse.Data(new JObject() {

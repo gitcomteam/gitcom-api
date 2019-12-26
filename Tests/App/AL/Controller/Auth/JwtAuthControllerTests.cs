@@ -29,7 +29,7 @@ namespace Tests.App.AL.Controller.Auth {
             var email = $"testemail{Rand.SmallInt()}@root.com";
             var password = "test1234";
             
-            UserRepository.Create(email, "root", password);
+            UserRepository.Create(email, $"root{Rand.SmallInt()}", password);
             
             var user = UserRepository.FindByEmail(email);
             

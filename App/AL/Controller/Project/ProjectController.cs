@@ -15,9 +15,7 @@ namespace App.AL.Controller.Project {
                 var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
                     new ExistsInTable("project_guid", "projects", "guid"),
                 });
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 return HttpResponse.Item("project", new ProjectTransformer().Transform(
                     ProjectRepository.FindByGuid((string) Request.Query["project_guid"])

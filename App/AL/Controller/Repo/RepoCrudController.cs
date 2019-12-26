@@ -27,9 +27,7 @@ namespace App.AL.Controller.Repo {
                     new ShouldBeCorrectEnumValue("service_type", typeof(RepoServiceType)),
                     new ShouldNotExistInTable("repo_url", "repositories")
                 });
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var me = UserRepository.Find(CurrentRequest.UserId);
                 
@@ -53,9 +51,7 @@ namespace App.AL.Controller.Repo {
                 }
                 
                 var errors = ValidationProcessor.Process(Request, rules);
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var repo = RepoRepository.FindByGuid((string) Request.Query["repo_guid"]);
 
@@ -71,9 +67,7 @@ namespace App.AL.Controller.Repo {
                 var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
                     new ExistsInTable("repo_guid", "repositories", "guid"),
                 });
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var repo = RepoRepository.FindByGuid((string) Request.Query["repo_guid"]);
                 repo.Delete();

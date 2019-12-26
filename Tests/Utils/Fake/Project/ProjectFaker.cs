@@ -12,7 +12,7 @@ namespace Tests.Utils.Fake.Project {
         {
             user = user ?? UserFaker.Create();
             repository = repository ?? RepoFaker.Create();
-            return ProjectRepository.CreateAndGet(
+            return ProjectRepository.FindOrCreate(
                 "repoName_" + Rand.SmallInt(),
                 user,
                 repository

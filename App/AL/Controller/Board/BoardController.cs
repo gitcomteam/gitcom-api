@@ -18,9 +18,7 @@ namespace App.AL.Controller.Board {
                     new ShouldHaveParameter("board_guid"),
                     new ExistsInTable("board_guid", "boards", "guid")
                 });
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 return HttpResponse.Item("board", new BoardTransformer().Transform(
                     BoardRepository.FindByGuid((string) Request.Query["board_guid"])
@@ -32,9 +30,7 @@ namespace App.AL.Controller.Board {
                     new ShouldHaveParameter("project_guid"),
                     new ExistsInTable("project_guid", "projects", "guid")
                 });
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var project = ProjectRepository.FindByGuid(GetRequestStr("project_guid"));
 

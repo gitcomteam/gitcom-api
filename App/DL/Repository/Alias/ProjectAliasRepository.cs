@@ -22,8 +22,16 @@ namespace App.DL.Repository.Alias {
             return ProjectAlias.FindBy("project_id", project.id);
         }
 
-        public static ProjectAlias Create(Model.Project.Project project, string owner, string alias) {
-            return Find(ProjectAlias.Create(project, owner, alias));
+        public static ProjectAlias Create(Model.Project.Project project, string owner, string alias = null) {
+            alias ??= project.name;
+            
+            var newAlias = alias;
+            var postfix = 0;
+            while (FindByAlias(owner, newAlias) != null) {
+                newAlias = $"{alias}_{postfix}";
+                ++postfix;
+            }
+            return Find(ProjectAlias.Create(project, owner, newAlias));
         }
     }
 }

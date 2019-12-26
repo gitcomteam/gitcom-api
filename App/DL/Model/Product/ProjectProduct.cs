@@ -33,6 +33,11 @@ namespace App.DL.Model.Product {
                 "SELECT * FROM project_products WHERE id = @id LIMIT 1", new {id}
             ).FirstOrDefault();
 
+        public static ProjectProduct[] Get(Project.Project project)
+            => Connection().Query<ProjectProduct>(
+                "SELECT * FROM project_products WHERE project_id = @project_id", new {project_id = project.id}
+            ).ToArray();
+
         public static ProjectProduct FindBy(string col, string val)
             => Connection().Query<ProjectProduct>(
                 $"SELECT * FROM project_products WHERE {col} = @val LIMIT 1", new {val}

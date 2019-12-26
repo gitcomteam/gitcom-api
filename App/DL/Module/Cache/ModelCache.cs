@@ -3,88 +3,116 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 // TODO: replace or extend with Redis
+// TODO: debug potential exceptions and remove try catch to improve performance (if it helps)
 namespace App.DL.Module.Cache {
     public static class ModelCache {
         private const int CacheSize = 100;
         
-        private static Dictionary<string, Dictionary<int, object>> _idCache = new Dictionary<string, Dictionary<int, object>>();
+        private static Dictionary<string, Dictionary<int, object>> _intCache = new Dictionary<string, Dictionary<int, object>>();
         
-        private static Dictionary<string, Dictionary<string, object>> _guidCache = new Dictionary<string, Dictionary<string, object>>();
+        private static Dictionary<string, Dictionary<string, object>> _strCache = new Dictionary<string, Dictionary<string, object>>();
 
-        public static async void Store(string cacheName, string guid, object newObject) {
-            if (!_guidCache.ContainsKey(cacheName)) {
-                _guidCache.Add(cacheName, new Dictionary<string, object>());
+        public static void Store(string cacheName, string guid, object newObject) {
+            try {
+                if (!_strCache.ContainsKey(cacheName)) {
+                    _strCache.Add(cacheName, new Dictionary<string, object>());
+                }
+
+                if (_strCache[cacheName].ContainsKey(guid)) {
+                    return;
+                }
+
+                _strCache[cacheName][guid] = newObject;
+                CleanUp(cacheName);
             }
-            if (_guidCache[cacheName].ContainsKey(guid)) {
-                return;
+            catch (Exception e) {
+                //
             }
-            _guidCache[cacheName][guid] = newObject;
-            CleanUp(cacheName);
         }
         
-        public static async void Store(string cacheName, int id, object newObject) {
-            if (!_idCache.ContainsKey(cacheName)) {
-                _idCache.Add(cacheName, new Dictionary<int, object>());
+        public static void Store(string cacheName, int id, object newObject) {
+            try {
+                if (!_intCache.ContainsKey(cacheName)) {
+                    _intCache.Add(cacheName, new Dictionary<int, object>());
+                }
+
+                if (_intCache[cacheName].ContainsKey(id)) {
+                    return;
+                }
+
+                _intCache[cacheName].Add(id, newObject);
+                CleanUp(cacheName);
             }
-            if (_idCache[cacheName].ContainsKey(id)) {
-                return;
+            catch (Exception e) {
+                //
             }
-            _idCache[cacheName].Add(id, newObject);
-            CleanUp(cacheName);
         }
         
         public static object Get(string cacheName, int id) {
-            if (!_idCache.ContainsKey(cacheName)) {
-                _idCache.Add(cacheName, new Dictionary<int, object>());
+            try {
+                if (!_intCache.ContainsKey(cacheName)) {
+                    _intCache.Add(cacheName, new Dictionary<int, object>());
+                }
+
+                if (!_intCache[cacheName].ContainsKey(id)) {
+                    return null;
+                }
+
+                return _intCache[cacheName][id];
             }
-            if (!_idCache[cacheName].ContainsKey(id)) {
+            catch (Exception e) {
                 return null;
             }
-
-            return _idCache[cacheName][id];
         }
 
         public static object Get(string cacheName, string guid) {
-            if (!_guidCache.ContainsKey(cacheName)) {
-                _guidCache.Add(cacheName, new Dictionary<string, object>());
+            try {
+                if (!_strCache.ContainsKey(cacheName)) {
+                    _strCache.Add(cacheName, new Dictionary<string, object>());
+                }
+
+                if (!_strCache[cacheName].ContainsKey(guid)) {
+                    return null;
+                }
+
+                return _strCache[cacheName][guid];
             }
-            if (!_guidCache[cacheName].ContainsKey(guid)) {
+            catch (Exception e) {
                 return null;
             }
-            return _guidCache[cacheName][guid];
         }
 
         public static void CleanUp(string cacheName) {
-            if (_idCache.ContainsKey(cacheName) && _idCache[cacheName].Count > CacheSize) {
-                foreach (int key in _idCache[cacheName].Keys) {
-                    _idCache[cacheName].Remove(key);
+            if (_intCache.ContainsKey(cacheName) && _intCache[cacheName].Count > CacheSize) {
+                foreach (int key in _intCache[cacheName].Keys) {
+                    _intCache[cacheName].Remove(key);
                     return;
                 }
             }
             
-            if (_guidCache.ContainsKey(cacheName) && _guidCache[cacheName].Count > CacheSize) {
-                foreach (string key in _guidCache[cacheName].Keys) {
-                    _guidCache[cacheName].Remove(key);
+            if (_strCache.ContainsKey(cacheName) && _strCache[cacheName].Count > CacheSize) {
+                foreach (string key in _strCache[cacheName].Keys) {
+                    _strCache[cacheName].Remove(key);
                     return;
                 }
             }
         }
         
         public static void CleanUp(string cacheName, int id) {
-            if (_idCache.ContainsKey(cacheName) && _idCache[cacheName].ContainsKey(id)) {
-                _idCache[cacheName].Remove(id);
+            if (_intCache.ContainsKey(cacheName) && _intCache[cacheName].ContainsKey(id)) {
+                _intCache[cacheName].Remove(id);
             }
         }
 
         public static void CleanUp(string cacheName, string guid) {
-            if (_guidCache.ContainsKey(cacheName) && _guidCache[cacheName].ContainsKey(guid)) {
-                _guidCache[cacheName].Remove(guid);
+            if (_strCache.ContainsKey(cacheName) && _strCache[cacheName].ContainsKey(guid)) {
+                _strCache[cacheName].Remove(guid);
             }
         }
 
         public static void Reset() {
-            _idCache = new Dictionary<string, Dictionary<int, object>>();
-            _guidCache = new Dictionary<string, Dictionary<string, object>>();
+            _intCache = new Dictionary<string, Dictionary<int, object>>();
+            _strCache = new Dictionary<string, Dictionary<string, object>>();
         }
 
         public static void StartAutoResetTask() {

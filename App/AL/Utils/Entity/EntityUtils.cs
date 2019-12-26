@@ -44,12 +44,13 @@ namespace App.AL.Utils.Entity {
         }
 
         private static string GetTableForEntityType(EntityType type) {
-            // TODO: add more entities
             switch (type) {
                 case EntityType.Project:
                     return "projects";
                 case EntityType.Board:
                     return "boards";
+                case EntityType.BoardColumn:
+                    return "board_columns";
                 case EntityType.Card:
                     return "cards";
                 case EntityType.ProjectCategory:
@@ -58,6 +59,8 @@ namespace App.AL.Utils.Entity {
                     return "user_balances";
                 case EntityType.User:
                     return "users";
+                case EntityType.ProjectProductPurchase:
+                    return "project_products";
             }
 
             return null;
