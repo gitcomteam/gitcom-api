@@ -31,9 +31,7 @@ namespace App.AL.Controller.UserLibrary {
                 var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
                     new ExistsInTable("project_guid", "projects", "guid")
                 });
-                if (errors.Count > 0) {
-                    return HttpResponse.Errors(errors);
-                }
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var me = UserRepository.Find(CurrentRequest.UserId);
                 var project = ProjectRepository.FindByGuid(GetRequestStr("project_guid"));
