@@ -15,5 +15,7 @@ namespace App.DL.Repository.Product {
         public static UserOwnedProduct Create(Model.User.User user, ProjectProduct product) {
             return Find(UserOwnedProduct.Create(user, product));
         }
+
+        public static int UsersCount(ProjectProduct product) => UserOwnedProduct.UsersCount(product);
     }
 }

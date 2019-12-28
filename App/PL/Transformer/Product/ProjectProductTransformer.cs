@@ -14,6 +14,7 @@ namespace App.PL.Transformer.Product {
                 ["project_guid"] = item.Project().guid,
                 ["usd_price"] = (decimal) item.usd_price_pennies / 100,
                 ["duration_hours"] = item.duration_hours,
+                ["users_count"] = item.UsersCount(),
                 ["created_at"] = item.created_at.ToString("d"),
                 ["updated_at"] = item.created_at.ToString("d")
             };

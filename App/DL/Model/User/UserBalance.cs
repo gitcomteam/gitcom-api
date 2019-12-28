@@ -70,7 +70,7 @@ namespace App.DL.Model.User {
             => Connection().Query<UserBalance>(
                 $@"SELECT * FROM user_balances 
                     WHERE user_id = @user_id AND balance > 0 
-                    ORDER BY balance DESC LIMIT {limit}"
+                    ORDER BY balance DESC LIMIT {limit}", new {user_id = user.id}
             ).ToArray();
 
         public UserBalance Refresh() => Find(id);
