@@ -16,9 +16,10 @@ namespace App.AL.Controller.Withdraw {
         protected override IMiddleware[] Middleware() => new IMiddleware[] { new JwtMiddleware() };
 
         public WithdrawalsCrudController() {
-            Post("/api/v1/me/withdrawals/new", _ => {
+            Post("/api/v1/me/withdrawal/new", _ => {
                 var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
-                    new ShouldHaveParameters(new[] {"amount", "currency_type"}),
+                    new ShouldHaveParameters(new[] {"amount", "currency_type", "address"}),
+                    new MinLength("address", 4),
                     new ShouldBeCorrectEnumValue("currency_type", typeof(CurrencyType)),
                 }, true);
                 if (errors.Count > 0) return HttpResponse.Errors(errors);
@@ -26,10 +27,19 @@ namespace App.AL.Controller.Withdraw {
                 var me = UserRepository.Find(CurrentRequest.UserId);
 
                 var currencyType = (CurrencyType) GetRequestEnum("currency_type", typeof(CurrencyType));
+                
+                decimal amount = System.Convert.ToDecimal(GetRequestStr("amount"));
 
-                var amount = System.Convert.ToDecimal(GetRequestStr("amount"));
+                if (amount < 0.01M)
+                    return HttpResponse.Error(HttpStatusCode.Forbidden, "Amount cannot be less than 0.01");
+                
+                var userBalance = UserBalanceRepository.Find(me, currencyType);
+                if (userBalance == null || amount > userBalance.balance) 
+                    return HttpResponse.Error(HttpStatusCode.Forbidden, "You cannot withdraw more that you currently have");
+                
+                var address = GetRequestStr("address");
 
-                var withdrawalRequest = WithdrawalRequestRepository.Create(me, currencyType, amount);
+                var withdrawalRequest = WithdrawalRequestRepository.Create(me, currencyType, amount, address);
 
                 return HttpResponse.Item(
                     "withdraw_request", new WithdrawalRequestTransformer().Transform(withdrawalRequest),
@@ -39,10 +49,10 @@ namespace App.AL.Controller.Withdraw {
 
             Get("/api/v1/me/withdrawals/get", _ => {
                 var me = UserRepository.Find(CurrentRequest.UserId);
-                var withdrawalRequest = WithdrawalRequestRepository.Get(me);
+                var withdrawalRequests = WithdrawalRequestRepository.Get(me);
 
                 return HttpResponse.Item(
-                    "withdraw_requests", new WithdrawalRequestTransformer().Many(withdrawalRequest)
+                    "withdraw_requests", new WithdrawalRequestTransformer().Many(withdrawalRequests)
                 );
             });
         }

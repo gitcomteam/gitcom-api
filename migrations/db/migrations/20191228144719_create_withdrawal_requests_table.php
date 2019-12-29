@@ -16,6 +16,7 @@ class CreateWithdrawalRequestsTable extends AbstractMigration
                 'null' => false,
                 'scale' => 8
             ])
+            ->addColumn('address', 'string')
             ->addColumn('paid', 'boolean', ['default' => false])
             ->addTimestamps()
 

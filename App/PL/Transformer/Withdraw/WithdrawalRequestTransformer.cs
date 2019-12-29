@@ -11,6 +11,7 @@ namespace App.PL.Transformer.Withdraw {
                 ["guid"] = item.guid,
                 ["user_guid"] = item.User().guid,
                 ["amount"] = item.amount,
+                ["address"] = item.address,
                 ["paid"] = item.paid,
                 ["currency_type"] = item.currency_type.ToString(),
                 ["created_at"] = item.created_at.ToString(CultureInfo.InvariantCulture),

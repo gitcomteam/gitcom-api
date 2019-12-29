@@ -30,6 +30,12 @@ namespace App.DL.Model.User {
                 "SELECT * FROM user_balances WHERE id = @id LIMIT 1",
                 new {id}
             ).FirstOrDefault();
+        
+        public static UserBalance Find(User user, CurrencyType currencyType)
+            => Connection().Query<UserBalance>(
+                $"SELECT * FROM user_balances WHERE user_id = @user_id AND currency_type = '{currencyType.ToString()}' LIMIT 1",
+                new {user_id = user.id}
+            ).FirstOrDefault();
 
         public static UserBalance FindByGuid(string guid)
             => Connection().Query<UserBalance>(

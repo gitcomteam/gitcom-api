@@ -14,6 +14,8 @@ namespace App.DL.Model.Withdraw {
 
         public decimal amount;
 
+        public string address;
+
         public bool paid;
 
         public CurrencyType currency_type;
@@ -31,13 +33,13 @@ namespace App.DL.Model.Withdraw {
                 new {user_id = user.id}
             ).ToArray();
         
-        public static int Create(User.User user, CurrencyType currencyType, decimal amount) {
+        public static int Create(User.User user, CurrencyType currencyType, decimal amount, string address) {
             return ExecuteScalarInt(
-                $@"INSERT INTO withdrawal_requests(guid, user_id, currency_type, amount)
-                           VALUES (@guid, @user_id, '{currencyType.ToString()}', @amount);
+                $@"INSERT INTO withdrawal_requests(guid, user_id, currency_type, amount, address)
+                           VALUES (@guid, @user_id, '{currencyType.ToString()}', @amount, @address);
                            SELECT currval('withdrawal_requests_id_seq');"
                 , new {
-                    guid = Guid.NewGuid().ToString(), user_id = user.id, amount
+                    guid = Guid.NewGuid().ToString(), user_id = user.id, amount, address
                 }
             );
         }

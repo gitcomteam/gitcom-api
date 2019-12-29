@@ -7,7 +7,7 @@ namespace App.DL.Repository.Withdrawal {
 
         public static WithdrawalRequest[] Get(Model.User.User user) => WithdrawalRequest.Get(user);
 
-        public static WithdrawalRequest Create(Model.User.User user, CurrencyType currencyType, decimal amount)
-            => Find(WithdrawalRequest.Create(user, currencyType, amount));
+        public static WithdrawalRequest Create(Model.User.User user, CurrencyType currencyType, decimal amount, string address)
+            => Find(WithdrawalRequest.Create(user, currencyType, amount, address));
     }
 }
