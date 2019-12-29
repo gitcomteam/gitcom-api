@@ -39,6 +39,7 @@ namespace App.DL.Model.Product {
             => Connection().Query<UserOwnedProduct>(
                 $"SELECT * FROM user_owned_products WHERE {col} = @val LIMIT 50", new {val}
             ).ToArray();
+        
 
         public static int Create(User.User user, ProjectProduct product) {
             var expiryAt = DateTime.UtcNow.AddHours(product.duration_hours);
@@ -51,6 +52,13 @@ namespace App.DL.Model.Product {
                 }
             );
         }
+
+        public static int UsersCount(ProjectProduct product)
+            => QueryInt(
+                "SELECT COUNT(*) FROM user_owned_products WHERE product_id = @product_id", new {
+                    product_id = product.id
+                }
+            );
 
         public UserOwnedProduct Refresh() => Find(id);
 

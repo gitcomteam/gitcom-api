@@ -12,6 +12,8 @@ namespace App.DL.Repository.User {
         public static UserBalance Find(UserModel user) {
             return UserBalance.FindByUserId(user.id);
         }
+        
+        public static UserBalance Find(UserModel user, CurrencyType currencyType) => UserBalance.Find(user, currencyType);
 
         public static UserBalance FindOrCreate(Invoice invoice) {
             return FindOrCreate(

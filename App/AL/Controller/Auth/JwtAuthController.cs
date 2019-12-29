@@ -107,6 +107,9 @@ namespace App.AL.Controller.Auth {
 
                 if (queuedItem == null)
                     return HttpResponse.Error(HttpStatusCode.NotFound, "Confirmation key is invalid");
+
+                if (queuedItem.email_confirmed)
+                    return HttpResponse.Error(HttpStatusCode.Forbidden, "Email is already confirmed");
                 
                 var me = UserRepository.Find(queuedItem.user_id);
 

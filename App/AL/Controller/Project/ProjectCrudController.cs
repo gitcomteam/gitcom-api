@@ -31,17 +31,18 @@ namespace App.AL.Controller.Project {
                 return HttpResponse.Item("project", new ProjectTransformer().Transform(project.Refresh()));
             });
             
-            Delete("/api/v1/project/delete", _ => {
-                var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
-                    new ExistsInTable("project_guid", "projects", "guid"),
-                });
-                if (errors.Count > 0) return HttpResponse.Errors(errors);
-
-                var project = ProjectRepository.FindByGuid((string) Request.Query["project_guid"]);
-                ProjectRepository.Delete(project);
-
-                return HttpResponse.Item("project", new ProjectTransformer().Transform(project));
-            });
+            // TODO: enable?
+            // Delete("/api/v1/delete", _ => {
+            //     var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
+            //         new ExistsInTable("project_guid", "projects", "guid"),
+            //     });
+            //     if (errors.Count > 0) return HttpResponse.Errors(errors);
+            //
+            //     var project = ProjectRepository.FindByGuid((string) Request.Query["project_guid"]);
+            //     ProjectRepository.Delete(project);
+            //
+            //     return HttpResponse.Item("project", new ProjectTransformer().Transform(project));
+            // });
         }
     }
 }

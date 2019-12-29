@@ -69,6 +69,8 @@ namespace App.DL.Model.Product {
             );
             return this;
         }
+
+        public int UsersCount() => UserOwnedProductRepository.UsersCount(this);
         
         public void Delete() => ExecuteScalarInt("DELETE FROM project_products WHERE id = @id", new {id});
 
