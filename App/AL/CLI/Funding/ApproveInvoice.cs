@@ -10,7 +10,7 @@ using Micron.AL.Config.CLI;
 using Micron.DL.Module.CLI;
 using Newtonsoft.Json.Linq;
 
-namespace App.AL.CLI.Finding {
+namespace App.AL.CLI.Funding {
     public class ApproveInvoice : BaseCommand, ICliCommand {
         public override string Signature { get; } = "approve-invoice";
 

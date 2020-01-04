@@ -1,4 +1,4 @@
-using App.AL.CLI.Finding;
+using App.AL.CLI.Funding;
 using Micron.AL.CLI.Basic;
 using Micron.DL.Module.CLI;
 
