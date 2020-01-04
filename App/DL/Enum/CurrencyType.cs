@@ -6,6 +6,7 @@ namespace App.DL.Enum {
         Erc20Token = 4,
         Waves = 5,
         WavesToken = 6,
-        LiteCoin = 7
+        LiteCoin = 7,
+        GitComToken = 8,
     }
 }
