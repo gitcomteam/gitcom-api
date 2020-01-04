@@ -22,15 +22,15 @@ namespace App.AL.Controller.Auth {
 
         public JwtAuthController() {
             Get("/api/v1/login", _ => {
-                var email = (string) Request.Query["email"];
-
                 var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
                     new MinLength("email", 4),
                     new MinLength("password", 4)
                 }, true);
                 if (errors.Count > 0) return HttpResponse.Errors(errors);
 
-                var password = (string) Request.Query["password"];
+                var email = GetRequestStr("email").Replace(" ", "");
+
+                var password = GetRequestStr("password");
 
                 var user = UserRepository.FindByEmail(email);
 
@@ -60,7 +60,7 @@ namespace App.AL.Controller.Auth {
                 }, true);
                 if (errors.Count > 0) return HttpResponse.Errors(errors);
 
-                var login = GetRequestStr("login");
+                var login = GetRequestStr("login").Replace(" ", "");
                 var user = UserRepository.FindByLogin(login);
                 if (user != null)
                     return HttpResponse.Error(
@@ -68,7 +68,7 @@ namespace App.AL.Controller.Auth {
                         "User with this login already exist"
                     );
 
-                var email = GetRequestStr("email");
+                var email = GetRequestStr("email").Replace(" ", "");
                 user = UserRepository.FindByEmail(email);
                 if (user != null)
                     return HttpResponse.Error(
