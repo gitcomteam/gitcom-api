@@ -23,7 +23,8 @@ namespace App.DL.Repository.Alias {
         }
 
         public static ProjectAlias Create(Model.Project.Project project, string owner, string alias = null) {
-            alias ??= project.name;
+            owner = owner.Replace(" ", "").ToLower();
+            alias ??= project.name.Replace(" ", "").ToLower();
             
             var newAlias = alias;
             var postfix = 0;
