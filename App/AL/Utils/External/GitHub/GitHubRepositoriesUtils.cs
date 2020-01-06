@@ -1,16 +1,20 @@
 using System;
+using System.Net.Http;
 using App.DL.CustomObj.Repo;
 using App.DL.Enum;
 using App.DL.Model.Repo;
 using App.DL.Repository.Project;
 using App.DL.Repository.Repo;
 using App.PL.CustomTransformer.External;
+using Newtonsoft.Json.Linq;
 using Octokit;
 using Project = App.DL.Model.Project.Project;
 using User = App.DL.Model.User.User;
 
 namespace App.AL.Utils.External.GitHub {
     public static class GitHubRepositoriesUtils {
+        public const string GithubApiHost = "https://api.github.com/";
+        
         private static GitHubClient GetClient() {
             return new GitHubClient(new ProductHeaderValue("SupportHub"));
         }
@@ -42,6 +46,19 @@ namespace App.AL.Utils.External.GitHub {
             }
 
             return result.Id > 0;
+        }
+
+        public static JArray GetOrgMembers(string orgName) {
+            using (var client = new HttpClient()) {
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+                client.DefaultRequestHeaders.Add("User-Agent", "GitCom App");
+
+                string response = client
+                    .GetAsync($"{GithubApiHost}/orgs/{orgName}/members")
+                    .Result.Content.ReadAsStringAsync().Result;
+
+                return JArray.Parse(response);
+            }
         }
 
         public static (Project project, Repo repo) ImportProject(User me, string originId) {
