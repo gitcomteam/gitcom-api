@@ -15,6 +15,31 @@ ORM: [Dapper](https://github.com/StackExchange/Dapper)
 Migrations: [Phinx](https://github.com/cakephp/phinx)  
 Webserver: [NancyFX](https://github.com/NancyFx/Nancy)
 
+## Requirements:
+1. .NET Core 2.2
+2. [composer](https://getcomposer.org/) (PHP dependency manager) - used for migrations
+
+### Set up to develop locally:
+1. restore nuget packages  
+2. build project  
+3. copy config.example.json into:  
+**For main app**  
+App/bin/Debug/netcoreapp2.2/config/config.json  
+**For unit tests**  
+Tests/bin/Debug/netcoreapp2.2/config/config.json  
+
+4. edit config files - fill database name / user / etc.
+5. copy migrations/phinx.example.yml to migrations/phinx.yml
+6. edit phinx.yml - fill database user / password etc.
+7. install php & composer dependencies from migrations/composer.json via `composer install`
+8. run migrations (in migrations folder):
+
+`php vendor/bin/phinx migrate` - to migrate with default database (development)
+
+`php vendor/bin/phinx migrate -e testing` - to migrate with test database (used for testing)
+
+9. build and run App.dll inside `App/bin/Debug/netcoreapp2.2/bin`
+
 ### Contribution:
 Thank you for considering contributing to this repo, feel free to open a PR with any improvement, feature or bugfix.  
 All bugfixes should go into `release/patch` branch  
