@@ -12,7 +12,7 @@
       "name": "Unknown license"
     }
   },
-  "host": "api.gitcom.com",
+  "host": "api.gitcom.org",
   "basePath": "/api/v1",
   "schemes": [
     "http",
@@ -2384,7 +2384,7 @@
         "tags": [
           "withdrawal"
         ],
-        "operationId": "postWithdrawalRequests",
+        "operationId": "postWithdrawalRequest",
         "description": "",
         "produces": [
           "application/json"
@@ -2401,6 +2401,12 @@
             "name": "amount",
             "in": "query",
             "type": "number",
+            "required": true
+          },
+          {
+            "name": "address",
+            "in": "query",
+            "type": "string",
             "required": true
           },
           {
@@ -2471,7 +2477,7 @@
         "WavesToken",
         "LiteCoin"
       ]
-    },
+    }
   },
   "definitions": {
     "User": {
@@ -2952,6 +2958,11 @@
         "amount": {
           "type": "number",
           "example": 0.172
+        },
+        "address": {
+          "type": "string",
+          "example": "my0paypal@gmail.com",
+          "description": "Users email for PayPal or cryptocurrency address"
         },
         "paid": {
           "type": "boolean",
