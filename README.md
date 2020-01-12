@@ -15,6 +15,9 @@ ORM: [Dapper](https://github.com/StackExchange/Dapper)
 Migrations: [Phinx](https://github.com/cakephp/phinx)  
 Webserver: [NancyFX](https://github.com/NancyFx/Nancy)
 
+## API Documentation
+Check out `swagger.json` file inside repo or view it here: [swagger preview](https://generator.swagger.io/?url=https://raw.githubusercontent.com/gitcomteam/gitcom-api/master/swagger.json)
+
 ## Requirements:
 1. .NET Core 2.2
 2. [composer](https://getcomposer.org/) (PHP dependency manager) - used for migrations
