@@ -1,5 +1,7 @@
 # GitCom API
-![CircleCI](https://img.shields.io/circleci/build/github/gitcomteam/gitcom-api/master)
+<a href="https://circleci.com/gh/gitcomteam/gitcom-api">
+  <img src="https://img.shields.io/circleci/build/github/gitcomteam/gitcom-api/master" alt="chat on Discord">
+</a>
 <a href="https://discord.gg/gRxPXPn">
   <img src="https://img.shields.io/discord/658128774679756820?logo=discord" alt="chat on Discord">
 </a>
