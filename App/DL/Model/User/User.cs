@@ -3,6 +3,7 @@ using System.Linq;
 using App.DL.Enum;
 using App.DL.Model.Auth;
 using App.DL.Repository.Auth;
+using App.DL.Repository.Project;
 using Micron.DL.Module.Crypto;
 using Dapper;
 
@@ -56,5 +57,7 @@ namespace App.DL.Model.User {
 
         public ServiceAccessToken ServiceAccessToken(ServiceType serviceType) =>
             ServiceAccessTokenRepository.Find(this, serviceType);
+
+        public Project.Project[] Projects() => ProjectRepository.GetBy("creator_id", id);
     }
 }
