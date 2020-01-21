@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using App.AL.Validation.String;
-using App.DL.Model.User;
-using App.DL.Model.User.Registration;
 using App.DL.Module.Email;
 using App.DL.Repository.User;
 using App.DL.Repository.User.Registration;
@@ -12,6 +10,7 @@ using Micron.DL.Module.Auth;
 using Micron.DL.Module.Controller;
 using Micron.DL.Module.Crypto;
 using Micron.DL.Module.Http;
+using Micron.DL.Module.Misc;
 using Micron.DL.Module.Validator;
 using Nancy;
 using Newtonsoft.Json.Linq;
@@ -92,6 +91,45 @@ namespace App.AL.Controller.Auth {
 
                 return HttpResponse.Data(new JObject() {
                     ["response"] = "Please confirm your email"
+                });
+            });
+
+            Post("/api/v1/lazy_register", _ => {
+                var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
+                    new ShouldHaveParameters(new[] {"email"}),
+                    new ShouldBeValidEmail(),
+                }, true);
+                if (errors.Count > 0) return HttpResponse.Errors(errors);
+
+                var email = GetRequestStr("email").Replace(" ", "").ToLower();
+
+                var existingUser = UserRepository.FindByEmail(email);
+
+                if (existingUser != null) {
+                    return HttpResponse.Error(
+                        HttpStatusCode.Forbidden,
+                        "User with this email already exist, you need to log in"
+                    );
+                }
+
+                var login = email.Split("@")[0];
+
+                var registeredUser = UserRepository.FindOrCreateByEmailAndLogin(
+                    email, login, Rand.RandomString()
+                );
+
+                var registerQueueItem = RegistrationQueueItemRepository.Create(registeredUser);
+                
+                MailGunSender.QueueTemplate(
+                    "confirm-your-email", registeredUser.email, "GitCom - you almost there!",
+                    new[] {
+                        new KeyValuePair<string, string>("confirmation_key", registerQueueItem.confirmation_key),
+                    }
+                );
+                
+
+                return HttpResponse.Data(new JObject() {
+                    ["token"] = Jwt.FromUserId(registeredUser.id)
                 });
             });
 
