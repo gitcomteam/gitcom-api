@@ -10,10 +10,16 @@ namespace App.DL.Repository.Project {
             return ProjectModel.Find(id);
         }
 
-        public static ProjectModel FindByGuid(string guid) {
-            return ProjectModel.FindByGuid(guid);
-        }
+        public static ProjectModel FindByGuid(string guid) => ProjectModel.FindByGuid(guid);
         
+        public static ProjectModel FindBy(string col, string val) => ProjectModel.FindBy(col, val);
+        
+        public static ProjectModel FindBy(string col, int val) => ProjectModel.FindBy(col, val);
+        
+        public static ProjectModel[] GetBy(string col, string val) => ProjectModel.GetBy(col, val);
+        
+        public static ProjectModel[] GetBy(string col, int val) => ProjectModel.GetBy(col, val);
+
         public static ProjectModel FindRandom() => ProjectModel.FindRandom();
 
         public static ProjectModel[] GetRandom() => ProjectModel.GetRandom();

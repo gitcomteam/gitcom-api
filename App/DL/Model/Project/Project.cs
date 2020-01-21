@@ -52,6 +52,16 @@ namespace App.DL.Model.Project {
                 $"SELECT * FROM projects WHERE {col} = @val LIMIT 1", new {val}
             ).FirstOrDefault();
 
+        public static Project[] GetBy(string col, string val)
+            => Connection().Query<Project>(
+                $"SELECT * FROM projects WHERE {col} = @val LIMIT 1", new {val}
+            ).ToArray();
+        
+        public static Project[] GetBy(string col, int val)
+            => Connection().Query<Project>(
+                $"SELECT * FROM projects WHERE {col} = @val LIMIT 1", new {val}
+            ).ToArray();
+
         public static Project FindRandom()
             => Connection().Query<Project>(
                 "SELECT * FROM projects WHERE id = @id ORDER BY random() LIMIT 1"
