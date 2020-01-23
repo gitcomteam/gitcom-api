@@ -17,8 +17,6 @@ namespace App.AL.CLI.Creation {
         }
 
         public CliResult Execute() {
-            Output("Manually creating project");
-            
             Output("Type creator login:");
             var userLogin = Console.ReadLine();
 

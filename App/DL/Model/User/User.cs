@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Net.Mail;
 using App.DL.Enum;
 using App.DL.Model.Auth;
 using App.DL.Repository.Auth;
@@ -48,12 +49,20 @@ namespace App.DL.Model.User {
                 new {guid}
             ).FirstOrDefault();
 
-        public static int Create(string email, string login, string password)
-            => ExecuteScalarInt(
+        public static int Create(string email, string login, string password) {
+            try {
+                new MailAddress(email);
+            }
+            catch (Exception e) {
+                Console.WriteLine(e.StackTrace);
+                throw new Exception($"Invalid user email: {email}");
+            }
+            return ExecuteScalarInt(
                 @"INSERT INTO public.users(guid, email, login, password) VALUES (@guid, @email, @login, @password);
                 SELECT currval('users_id_seq');"
                 , new {guid = Guid.NewGuid().ToString(), email, login, password = Encryptor.Encrypt(password)}
             );
+        }
 
         public ServiceAccessToken ServiceAccessToken(ServiceType serviceType) =>
             ServiceAccessTokenRepository.Find(this, serviceType);
