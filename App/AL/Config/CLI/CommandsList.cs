@@ -12,6 +12,7 @@ namespace App.AL.Config.CLI {
                 new ApproveInvoice(),
                 new DbTablesCount(),
                 new CreateProject(),
+                new CreateUser(),
             };
     }
 }
