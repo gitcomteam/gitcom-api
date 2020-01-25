@@ -16,7 +16,7 @@ namespace App.AL.Utils.External.GitHub {
         public const string GithubApiHost = "https://api.github.com/";
         
         private static GitHubClient GetClient() {
-            return new GitHubClient(new ProductHeaderValue("SupportHub"));
+            return new GitHubClient(new ProductHeaderValue("GitCom"));
         }
         
         public static ExternalRepo[] GetUserRepositories(User user) {
