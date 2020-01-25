@@ -10,6 +10,7 @@ using Micron.DL.Module.Controller;
 using Micron.DL.Module.Http;
 using Newtonsoft.Json.Linq;
 using Octokit;
+using Sentry;
 
 namespace App.AL.Schedule.Project.Post {
     public class SyncReleases : BaseController {
@@ -23,7 +24,7 @@ namespace App.AL.Schedule.Project.Post {
                     try {
                         var githubClient = new GitHubClient(new ProductHeaderValue("GitCom"));
                         githubClient.Credentials = new Credentials("b914880948da3cb7c00be78bcf8febe63ebe2861");
-                        
+
                         int pageIndex = 1;
                         var repos = Repo.Paginate(pageIndex);
 
@@ -34,26 +35,26 @@ namespace App.AL.Schedule.Project.Post {
                                 var releases = githubClient.Repository.Release
                                     .GetAll(splitUrl[3], splitUrl[4]).Result;
                                 releases = releases.OrderBy(x => x.Id).ToArray();
-                                
+
                                 foreach (var release in releases) {
                                     if (release.Body.Length < 100) continue;
-                                    
+
                                     var existingPost = ProjectPost.FindBy("origin_id", release.Id.ToString());
                                     if (existingPost != null) continue;
-                                    
+
                                     var post = ProjectPost.Create(
                                         repo.Project(), $"Released {release.Name}", release.Body
                                     );
                                     post.UpdateCol("origin_id", release.Id.ToString());
                                 }
                             }
+
                             ++pageIndex;
                             repos = Repo.Paginate(pageIndex);
                         }
                     }
                     catch (Exception e) {
-                        Console.WriteLine(e);
-                        // SentrySdk.CaptureException(e);
+                        SentrySdk.CaptureException(e);
                     }
                 });
                 return HttpResponse.Data(new JObject());
