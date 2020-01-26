@@ -6,6 +6,7 @@ using App.DL.Enum;
 using App.DL.Model.Project.Post;
 using App.DL.Model.Repo;
 using Micron.DL.Middleware;
+using Micron.DL.Module.Config;
 using Micron.DL.Module.Controller;
 using Micron.DL.Module.Http;
 using Newtonsoft.Json.Linq;
@@ -23,7 +24,8 @@ namespace App.AL.Schedule.Project.Post {
                 Task.Run(() => {
                     try {
                         var githubClient = new GitHubClient(new ProductHeaderValue("GitCom"));
-                        githubClient.Credentials = new Credentials("b914880948da3cb7c00be78bcf8febe63ebe2861");
+                        var githubToken = AppConfig.GetConfiguration("auth:external:github:token");
+                        if (githubToken != null) githubClient.Credentials = new Credentials(githubToken);
 
                         int pageIndex = 1;
                         var repos = Repo.Paginate(pageIndex);
