@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using App.AL.Middleware.Schedule;
@@ -22,21 +23,27 @@ namespace App.AL.Schedule.Project.Post {
         public SyncReleases() {
             Post("/api/v1/schedule/project/sync_releases/start", _ => {
                 Task.Run(() => {
-                    try {
-                        var githubClient = new GitHubClient(new ProductHeaderValue("GitCom"));
-                        var githubToken = AppConfig.GetConfiguration("auth:external:github:token");
-                        if (githubToken != null) githubClient.Credentials = new Credentials(githubToken);
+                    var githubClient = new GitHubClient(new ProductHeaderValue("GitCom"));
+                    var githubToken = AppConfig.GetConfiguration("auth:external:github:token");
+                    if (githubToken != null) githubClient.Credentials = new Credentials(githubToken);
 
-                        int pageIndex = 1;
-                        var repos = Repo.Paginate(pageIndex);
+                    int pageIndex = 1;
+                    var repos = Repo.Paginate(pageIndex);
 
-                        while (repos.Length > 0) {
-                            foreach (var repo in repos) {
+                    while (repos.Length > 0) {
+                        foreach (var repo in repos) {
+                            try {
                                 if (repo.service_type != RepoServiceType.GitHub) continue;
                                 var splitUrl = repo.repo_url.Split("/");
-                                var releases = githubClient.Repository.Release
-                                    .GetAll(splitUrl[3], splitUrl[4]).Result;
-                                releases = releases.OrderBy(x => x.Id).ToArray();
+                                IEnumerable<Release> releases;
+                                try {
+                                    releases = githubClient.Repository.Release.GetAll(
+                                        splitUrl[3], splitUrl[4]
+                                    ).Result.OrderBy(x => x.Id);
+                                }
+                                catch (Exception e) {
+                                    continue; // ignored
+                                }
 
                                 foreach (var release in releases) {
                                     if (release.Body.Length < 100) continue;
@@ -51,13 +58,13 @@ namespace App.AL.Schedule.Project.Post {
                                     post.UpdateCol("created_at", release.PublishedAt.ToString());
                                 }
                             }
-
-                            ++pageIndex;
-                            repos = Repo.Paginate(pageIndex);
+                            catch (Exception e) {
+                                SentrySdk.CaptureException(e);
+                            }
                         }
-                    }
-                    catch (Exception e) {
-                        SentrySdk.CaptureException(e);
+
+                        ++pageIndex;
+                        repos = Repo.Paginate(pageIndex);
                     }
                 });
                 return HttpResponse.Data(new JObject());
