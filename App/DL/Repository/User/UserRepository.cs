@@ -1,3 +1,4 @@
+using App.DL.Model.User.Badge;
 using App.DL.Module.Cache;
 using App.DL.Repository.User.Referral;
 using Micron.DL.Module.Misc;
@@ -53,6 +54,8 @@ namespace App.DL.Repository.User {
             }
             
             user ??= Create(email, login, password);
+
+            UserBadge.Create(user, "Early adopter");
 
             if (referral != null) UserReferralRepository.Create(user, referral);
             
