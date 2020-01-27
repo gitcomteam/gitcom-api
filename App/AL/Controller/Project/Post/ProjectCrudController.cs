@@ -32,7 +32,9 @@ namespace App.AL.Controller.Project.Post {
                 }, true);
                 if (errors.Count > 0) return HttpResponse.Errors(errors);
 
-                var post = ProjectPost.Create(project, "some title", "some content");
+                var post = ProjectPost.Create(
+                    project, GetRequestStr("title"), GetRequestStr("content")
+                );
 
                 return HttpResponse.Item(
                     "post", new ProjectPostTransformer().Transform(post), HttpStatusCode.Created
