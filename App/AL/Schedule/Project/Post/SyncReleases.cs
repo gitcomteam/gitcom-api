@@ -48,6 +48,7 @@ namespace App.AL.Schedule.Project.Post {
                                         repo.Project(), $"Released {release.Name}", release.Body
                                     );
                                     post.UpdateCol("origin_id", release.Id.ToString());
+                                    post.UpdateCol("created_at", release.PublishedAt.ToString());
                                 }
                             }
 
