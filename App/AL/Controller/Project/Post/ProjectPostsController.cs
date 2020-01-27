@@ -1,3 +1,4 @@
+using App.DL.Model.Project.Post;
 using App.DL.Repository.Project;
 using App.PL.Transformer.Project.Post;
 using Micron.AL.Validation.Db;
@@ -11,6 +12,12 @@ namespace App.AL.Controller.Project.Post {
         protected override IMiddleware[] Middleware() => new IMiddleware[] {};
 
         public ProjectPostsController() {
+            Get("/api/v1/all_projects/posts/latest/get", _ => {
+                return HttpResponse.Item(
+                    "posts", new ProjectPostTransformer().Many(ProjectPost.Latest())
+                );
+            });
+            
             Get("/api/v1/project/posts/get", _ => {
                 var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
                     new ExistsInTable("project_guid", "projects", "guid"),

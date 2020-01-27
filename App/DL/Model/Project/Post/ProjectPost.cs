@@ -31,8 +31,12 @@ namespace App.DL.Model.Project.Post {
 
         public static ProjectPost[] Get(Project project)
             => Connection().Query<ProjectPost>(
-                "SELECT * FROM project_posts WHERE project_id = @project_id", new {project_id = project.id}
+                "SELECT * FROM project_posts WHERE project_id = @project_id LIMIT 10", new {project_id = project.id}
             ).ToArray();
+
+        public static ProjectPost[] Latest() => Connection()
+            .Query<ProjectPost>("SELECT * FROM project_posts ORDER BY id DESC LIMIT 10")
+            .ToArray();
 
         public static ProjectPost Create(Project project, string title, string content) {
             return Find(ExecuteScalarInt(
