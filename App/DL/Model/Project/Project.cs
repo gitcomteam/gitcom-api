@@ -55,12 +55,12 @@ namespace App.DL.Model.Project {
 
         public static Project[] GetBy(string col, string val)
             => Connection().Query<Project>(
-                $"SELECT * FROM projects WHERE {col} = @val LIMIT 1", new {val}
+                $"SELECT * FROM projects WHERE {col} = @val LIMIT 50", new {val}
             ).ToArray();
         
         public static Project[] GetBy(string col, int val)
             => Connection().Query<Project>(
-                $"SELECT * FROM projects WHERE {col} = @val LIMIT 1", new {val}
+                $"SELECT * FROM projects WHERE {col} = @val LIMIT 50", new {val}
             ).ToArray();
 
         public static Project FindRandom()
