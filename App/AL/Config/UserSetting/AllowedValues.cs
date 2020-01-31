@@ -8,7 +8,8 @@ namespace App.AL.Config.UserSetting {
                 ["subscription_currency"] = new[] {
                     "Usd", "BitCoin", "Ethereum", "Waves", "LiteCoin"
                 },
-                ["subscription_amount"] = null
+                ["subscription_amount"] = null,
+                ["survey_after_register_redirect"] = new[] {"f", "t"},
             };
     }
 }
