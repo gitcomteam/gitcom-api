@@ -52,6 +52,12 @@ namespace App.DL.Model.Repo {
                 new {origin_id = originId}
             ).FirstOrDefault();
 
+        public static Repo[] Paginate(int page, int size = 20)
+            => Connection().Query<Repo>(
+                "SELECT * FROM repositories OFFSET @offset LIMIT @size",
+                new {offset = ((page-1) * size), size}
+            ).ToArray();
+
         public static int Create(
             UserModel creator, string title, string repoUrl, RepoServiceType serviceType, string originId = ""
         ) {

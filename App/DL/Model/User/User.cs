@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Mail;
 using App.DL.Enum;
 using App.DL.Model.Auth;
+using App.DL.Model.User.Badge;
 using App.DL.Repository.Auth;
 using App.DL.Repository.Project;
 using Micron.DL.Module.Crypto;
@@ -68,5 +69,7 @@ namespace App.DL.Model.User {
             ServiceAccessTokenRepository.Find(this, serviceType);
 
         public Project.Project[] Projects() => ProjectRepository.GetBy("creator_id", id);
+
+        public UserBadge[] Badges() => UserBadge.Get(this);
     }
 }
