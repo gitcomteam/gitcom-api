@@ -6,9 +6,10 @@ namespace App.AL.Config.UserSetting {
         public static Dictionary<string, string[]> GetAllowed()
             => new Dictionary<string, string[]> {
                 ["subscription_currency"] = new[] {
-                    "Usd", "BitCoin", "Ethereum", "Erc20Token", "Waves", "WavesToken", "LiteCoin"
+                    "Usd", "BitCoin", "Ethereum", "Waves", "LiteCoin"
                 },
-                ["subscription_amount"] = null
+                ["subscription_amount"] = null,
+                ["survey_after_register_redirect"] = new[] {"f", "t"},
             };
     }
 }

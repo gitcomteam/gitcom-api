@@ -5,6 +5,7 @@ using App.DL.Repository.Board;
 using App.DL.Repository.BoardColumn;
 using App.DL.Repository.Card;
 using App.DL.Repository.ProjectTeamMember;
+using App.DL.Repository.UserLibrary;
 
 namespace App.AL.Tasks.Project {
     public static class ProjectSetUp {
@@ -22,8 +23,9 @@ namespace App.AL.Tasks.Project {
             BoardColumnRepository.CreateAndGet("In progress", board, 2);
             BoardColumnRepository.CreateAndGet("Done", board, 3);
             CardRepository.CreateAndGet(
-                "Some task", DefaultCardDescription, 1, todoColumn, creator
+                "Example card", DefaultCardDescription, 1, todoColumn, creator
             );
+            UserLibraryItemRepository.FindOrCreate(project.Creator(), project);
         }
     }
 }

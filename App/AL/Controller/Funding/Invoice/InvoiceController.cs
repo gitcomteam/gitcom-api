@@ -4,8 +4,8 @@ using App.AL.Utils.Entity;
 using App.AL.Validation.Entity;
 using App.AL.Validation.Funding;
 using App.DL.Enum;
-using App.DL.Model.User;
 using App.DL.Repository.Funding;
+using App.DL.Repository.User;
 using App.PL.Transformer.Funding;
 using Micron.AL.Validation.Basic;
 using Micron.AL.Validation.Db;
@@ -23,7 +23,7 @@ namespace App.AL.Controller.Funding.Invoice {
 
         public InvoiceController() {
             Post("/api/v1/invoice/new", _ => {
-                var me = User.Find(CurrentRequest.UserId);
+                var me = DL.Model.User.User.Find(CurrentRequest.UserId);
 
                 var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
                     new ShouldHaveParameters(new[] {"entity_guid", "entity_type", "amount", "currency_type"}),
@@ -56,7 +56,7 @@ namespace App.AL.Controller.Funding.Invoice {
             });
 
             Get("/api/v1/me/invoice/get", _ => {
-                var me = User.Find(CurrentRequest.UserId);
+                var me = UserRepository.Find(CurrentRequest.UserId);
 
                 var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
                     new ShouldHaveParameters(new[] {"invoice_guid"}),
@@ -73,7 +73,7 @@ namespace App.AL.Controller.Funding.Invoice {
             });
             
             Get("/api/v1/me/invoices/finished", _ => {
-                var me = User.Find(CurrentRequest.UserId);
+                var me = UserRepository.Find(CurrentRequest.UserId);
 
                 var invoices = DL.Model.Funding.Invoice.GetForUserByStatuses(me, new [] {
                     InvoiceStatus.Confirmed, InvoiceStatus.Failed, InvoiceStatus.Done
@@ -83,7 +83,7 @@ namespace App.AL.Controller.Funding.Invoice {
             });
             
             Get("/api/v1/me/invoices/active", _ => {
-                var me = User.Find(CurrentRequest.UserId);
+                var me = UserRepository.Find(CurrentRequest.UserId);
 
                 var invoices = DL.Model.Funding.Invoice.GetActiveForUser(me, 25);
                 
@@ -91,7 +91,7 @@ namespace App.AL.Controller.Funding.Invoice {
             });
 
             Patch("/api/v1/me/invoice/status/update", _ => {
-                var me = User.Find(CurrentRequest.UserId);
+                var me = UserRepository.Find(CurrentRequest.UserId);
                 
                 var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
                     new ShouldHaveParameters(new[] {"invoice_guid", "status"}),

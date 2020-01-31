@@ -12,7 +12,7 @@ using Micron.DL.Module.Http;
 using Micron.DL.Module.Validator;
 using Nancy;
 
-namespace App.AL.Controller.Settings {
+namespace App.AL.Controller.User.Settings {
     public class MySettingsController : BaseController {
         protected override IMiddleware[] Middleware() => new IMiddleware[] {
             new JwtMiddleware(),

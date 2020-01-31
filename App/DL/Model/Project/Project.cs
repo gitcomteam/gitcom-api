@@ -11,6 +11,7 @@ using App.DL.Repository.Alias;
 using App.DL.Repository.Project;
 using App.DL.Repository.Product;
 using App.DL.Model.Product;
+using App.DL.Model.Project.Post;
 
 // ReSharper disable InconsistentNaming
 
@@ -54,12 +55,12 @@ namespace App.DL.Model.Project {
 
         public static Project[] GetBy(string col, string val)
             => Connection().Query<Project>(
-                $"SELECT * FROM projects WHERE {col} = @val LIMIT 1", new {val}
+                $"SELECT * FROM projects WHERE {col} = @val LIMIT 50", new {val}
             ).ToArray();
         
         public static Project[] GetBy(string col, int val)
             => Connection().Query<Project>(
-                $"SELECT * FROM projects WHERE {col} = @val LIMIT 1", new {val}
+                $"SELECT * FROM projects WHERE {col} = @val LIMIT 50", new {val}
             ).ToArray();
 
         public static Project FindRandom()
@@ -135,6 +136,8 @@ namespace App.DL.Model.Project {
 
         public int StarsCount() =>
             ExecuteScalarInt("SELECT COUNT(*) FROM user_projects_library WHERE project_id = @id", new {id});
+
+        public ProjectPost[] Posts() => ProjectPost.Get(this);
 
         public void Delete() => ExecuteScalarInt("DELETE FROM projects WHERE id = @id", new {id});
     }
