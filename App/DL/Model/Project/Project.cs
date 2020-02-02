@@ -7,6 +7,7 @@ using RepoModel = App.DL.Model.Repo.Repo;
 using UserModel = App.DL.Model.User.User;
 using Dapper;
 using App.DL.Model.Alias;
+using App.DL.Model.Image.Rel;
 using App.DL.Repository.Alias;
 using App.DL.Repository.Project;
 using App.DL.Repository.Product;
@@ -57,7 +58,7 @@ namespace App.DL.Model.Project {
             => Connection().Query<Project>(
                 $"SELECT * FROM projects WHERE {col} = @val LIMIT 50", new {val}
             ).ToArray();
-        
+
         public static Project[] GetBy(string col, int val)
             => Connection().Query<Project>(
                 $"SELECT * FROM projects WHERE {col} = @val LIMIT 50", new {val}
@@ -134,8 +135,11 @@ namespace App.DL.Model.Project {
                    , new {project_id = id, user_id = user.id}
                ) > 0;
 
-        public int StarsCount() =>
-            ExecuteScalarInt("SELECT COUNT(*) FROM user_projects_library WHERE project_id = @id", new {id});
+        public int StarsCount() => ExecuteScalarInt(
+            "SELECT COUNT(*) FROM user_projects_library WHERE project_id = @id", new {id}
+        );
+
+        public Image.Image[] Images() => ProjectImage.Get(this).Select(x => x.Image()).ToArray();
 
         public ProjectPost[] Posts() => ProjectPost.Get(this);
 
