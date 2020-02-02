@@ -27,6 +27,11 @@ Check out `swagger.json` file inside repo or view it here: [swagger preview](htt
 1. .NET Core 2.2
 2. [composer](https://getcomposer.org/) (PHP dependency manager) - used for migrations
 
+## Directory structure (App project):
+1. `AL` stands for `Application layer` - contains classes like Controllers, Utility classes (basically all business logic)
+2. `DL` stands for `Data layer` - contains models, repositories, custom class bindings etc.
+3. `PL` stands for `Presentation layer` - contanis transformers and everything related to data processing / presentation
+
 ### Set up to develop locally:
 1. restore nuget packages  
 2. build project  
