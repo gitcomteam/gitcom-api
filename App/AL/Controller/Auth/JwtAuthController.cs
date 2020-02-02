@@ -39,9 +39,8 @@ namespace App.AL.Controller.Auth {
                     return HttpResponse.Error(
                         new HttpError(HttpStatusCode.Unauthorized, "Your email / password combination is incorrect")
                     );
-
-                var queuedItem = RegistrationQueueItemRepository.Find(user);
-                if (queuedItem != null && !queuedItem.email_confirmed)
+                
+                if (!user.EmailConfirmed())
                     return HttpResponse.Error(HttpStatusCode.Forbidden, "You need to confirm your email");
 
                 return HttpResponse.Data(new JObject() {

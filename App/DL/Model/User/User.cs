@@ -6,6 +6,7 @@ using App.DL.Model.Auth;
 using App.DL.Model.User.Badge;
 using App.DL.Repository.Auth;
 using App.DL.Repository.Project;
+using App.DL.Repository.User.Registration;
 using Micron.DL.Module.Crypto;
 using Dapper;
 
@@ -58,6 +59,7 @@ namespace App.DL.Model.User {
                 Console.WriteLine(e.StackTrace);
                 throw new Exception($"Invalid user email: {email}");
             }
+
             return ExecuteScalarInt(
                 @"INSERT INTO public.users(guid, email, login, password) VALUES (@guid, @email, @login, @password);
                 SELECT currval('users_id_seq');"
@@ -65,11 +67,22 @@ namespace App.DL.Model.User {
             );
         }
 
+        public static User[] Paginate(int page, int size = 10)
+            => Connection().Query<User>(
+                "SELECT * FROM users OFFSET @offset LIMIT @size",
+                new {offset = ((page - 1) * size), size}
+            ).ToArray();
+
         public ServiceAccessToken ServiceAccessToken(ServiceType serviceType) =>
             ServiceAccessTokenRepository.Find(this, serviceType);
 
         public Project.Project[] Projects() => ProjectRepository.GetBy("creator_id", id);
 
         public UserBadge[] Badges() => UserBadge.Get(this);
+
+        public bool EmailConfirmed() {
+            var queuedItem = RegistrationQueueItemRepository.Find(this);
+            return queuedItem == null || queuedItem.email_confirmed;
+        }
     }
 }
