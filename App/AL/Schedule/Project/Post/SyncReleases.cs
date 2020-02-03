@@ -6,6 +6,7 @@ using App.AL.Middleware.Schedule;
 using App.DL.Enum;
 using App.DL.Model.Project.Post;
 using App.DL.Model.Repo;
+using App.DL.Module.Schedule;
 using Micron.DL.Middleware;
 using Micron.DL.Module.Config;
 using Micron.DL.Module.Controller;
@@ -22,7 +23,7 @@ namespace App.AL.Schedule.Project.Post {
 
         public SyncReleases() {
             Post("/api/v1/schedule/project/sync_releases/start", _ => {
-                Task.Run(() => {
+                var task = Task.Run(() => {
                     var githubClient = new GitHubClient(new ProductHeaderValue("GitCom"));
                     var githubToken = AppConfig.GetConfiguration("auth:external:github:token");
                     if (githubToken != null) githubClient.Credentials = new Credentials(githubToken);
@@ -69,6 +70,7 @@ namespace App.AL.Schedule.Project.Post {
                         repos = Repo.Paginate(pageIndex);
                     }
                 });
+                JobsPool.Get().Push(task);
                 return HttpResponse.Data(new JObject());
             });
         }

@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using App.AL.Middleware.Schedule;
 using App.DL.Enum;
+using App.DL.Module.Schedule;
 using App.DL.Repository.Funding;
 using App.DL.Repository.User;
 using Micron.DL.Middleware;
@@ -19,7 +20,7 @@ namespace App.AL.Schedule.User.Register {
 
         public RegisterBonus() {
             Post("/api/v1/schedule/user/register_bonus/start", _ => {
-                Task.Run(() => {
+                var task = Task.Run(() => {
                     int tokenBonus = Convert.ToInt32(
                         AppConfig.GetConfiguration("user:registration:token_bonus")
                     );
@@ -49,6 +50,7 @@ namespace App.AL.Schedule.User.Register {
                         users = DL.Model.User.User.Paginate(pageIndex, 100);
                     }
                 });
+                JobsPool.Get().Push(task);
                 return HttpResponse.Data(new JObject());
             });
         }
