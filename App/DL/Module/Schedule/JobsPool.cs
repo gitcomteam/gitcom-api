@@ -23,6 +23,6 @@ namespace App.DL.Module.Schedule {
 
         public static int PoolSize() => Get().tasks.Count;
 
-        public void WaitAll() => Task.WhenAll(tasks.ToArray());
+        public void WaitAll() => Task.WaitAll(tasks.ToArray());
     }
 }
