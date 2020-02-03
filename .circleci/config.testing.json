@@ -11,7 +11,10 @@
         "jwt": {
             "secret_key": "GQDsD21j8s2zdm12F1f1k12",
             "token_life_days": 7
-        }
+        },
+	"schedule": {
+	    "token": "fk1092fk21"
+	}
     },
     "schedule": {
         "token": "F2l901f"

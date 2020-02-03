@@ -1,4 +1,3 @@
-using System.Threading;
 using App.DL.Enum;
 using App.DL.Module.Schedule;
 using App.DL.Repository.Funding;

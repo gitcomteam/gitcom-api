@@ -21,11 +21,8 @@ namespace App.AL.Controller.Alias.Project {
                 var alias = ProjectAliasRepository.FindByAlias(
                     GetRequestStr("owner"), GetRequestStr("alias")
                 );
+                if (alias == null) return HttpResponse.Error(HttpStatusCode.NotFound, "Project not found");
 
-                if (alias == null) {
-                    return HttpResponse.Error(HttpStatusCode.NotFound, "Project not found");
-                }
-                
                 return HttpResponse.Item("project", new ProjectTransformer().Transform(alias.Project()));
             });
         }
