@@ -1,5 +1,6 @@
 using System.Threading;
 using App.DL.Enum;
+using App.DL.Module.Schedule;
 using App.DL.Repository.Funding;
 using App.DL.Repository.User;
 using Micron.DL.Module.Config;
@@ -24,7 +25,7 @@ namespace Tests.App.AL.Schedule.User.Register {
 
             Assert.Zero(FundingTransactionRepository.Get(user).Length);
 
-            Thread.Sleep(250);
+            JobsPool.Get().WaitAll();
             
             Assert.True(FundingTransactionRepository.Get(user).Length == 1);
             var balance = UserBalanceRepository.Find(user, CurrencyType.GitComToken);
