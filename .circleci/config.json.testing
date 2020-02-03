@@ -13,11 +13,12 @@
             "token_life_days": 7
         }
     },
-    "Logging": {
-        "LogLevel": {
-            "Default": "Debug",
-            "System": "Information",
-            "Microsoft": "Information"
+    "schedule": {
+        "token": "F2l901f"
+    },
+    "user": {
+        "registration": {
+                "token_bonus": 500
         }
     }
 }

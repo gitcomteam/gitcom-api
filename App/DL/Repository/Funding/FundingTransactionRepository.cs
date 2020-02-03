@@ -25,13 +25,14 @@ namespace App.DL.Repository.Funding {
 
         public static FundingTransaction Create(
             UserModel from, int entityId, EntityType entityType, Invoice invoice, decimal amount,
-            CurrencyType currencyType
+            CurrencyType currencyType, string note = null
         ) {
             return Find(FundingTransaction.Create(from, entityId, entityType, invoice, amount, currencyType));
         }
-        
+
         public static FundingTransaction Create(
-            UserModel from, int entityId, EntityType entityType, decimal amount, CurrencyType currencyType
+            UserModel from, int entityId, EntityType entityType, decimal amount, CurrencyType currencyType, 
+            string note = null
         ) {
             return Find(FundingTransaction.Create(from, entityId, entityType, null, amount, currencyType));
         }

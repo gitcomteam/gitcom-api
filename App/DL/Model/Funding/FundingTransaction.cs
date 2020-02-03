@@ -78,15 +78,17 @@ namespace App.DL.Model.Funding {
 
         public static int Create(
             UserModel from, int entityId, EntityType entityType, Invoice invoice, decimal amount,
-            CurrencyType currencyType
+            CurrencyType currencyType, string note = null
         ) {
             return ExecuteScalarInt(
-                $@"INSERT INTO public.funding_transactions(from_user_id, guid, entity_id, entity_type, invoice_id, amount, currency_type)
-                        VALUES (@from_user_id, @guid, @entityId, '{entityType.ToString()}', @invoice_id, @amount, '{currencyType.ToString()}');
-                        SELECT currval('funding_transactions_id_seq');"
+                $@"INSERT INTO public.funding_transactions(from_user_id, guid, entity_id, entity_type, invoice_id, 
+                        amount, currency_type, note)
+                    VALUES (@from_user_id, @guid, @entityId, '{entityType.ToString()}', @invoice_id, @amount, 
+                        '{currencyType.ToString()}', @note);
+                    SELECT currval('funding_transactions_id_seq');"
                 , new {
                     from_user_id = from.id, guid = Guid.NewGuid().ToString(), entityId,
-                    invoice_id = invoice != null ? invoice.id : (int?) null, amount
+                    invoice_id = invoice != null ? invoice.id : (int?) null, amount, note
                 }
             );
         }
