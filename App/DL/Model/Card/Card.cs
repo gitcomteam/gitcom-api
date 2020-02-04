@@ -24,6 +24,8 @@ namespace App.DL.Model.Card {
 
         public int column_id;
 
+        public string origin_id;
+
         public DateTime created_at;
 
         public DateTime updated_at;
@@ -46,6 +48,11 @@ namespace App.DL.Model.Card {
                 }
             ).FirstOrDefault();
         }
+        
+        public static Card FindBy(string col, string val)
+            => Connection().Query<Card>(
+                $"SELECT * FROM cards WHERE {col} = @val LIMIT 1", new {val}
+            ).FirstOrDefault();
 
         public static int Create(
             string name, string description, int columnOrder, BoardColumnModel column, UserModel creator
@@ -66,6 +73,22 @@ namespace App.DL.Model.Card {
                 SET name = @name, description = @description, column_order = @column_order, column_id = @column_id
                 WHERE id = @id",
                 new {name, description, column_order, column_id, id}
+            );
+            return this;
+        }
+        
+        public Card UpdateCol(string col, string val) {
+            ExecuteSql(
+                $"UPDATE cards SET {col} = @val, updated_at = CURRENT_TIMESTAMP WHERE id = @id",
+                new {val, id}
+            );
+            return this;
+        }
+        
+        public Card UpdateCol(string col, int val) {
+            ExecuteSql(
+                $"UPDATE cards SET {col} = @val, updated_at = CURRENT_TIMESTAMP WHERE id = @id",
+                new {val, id}
             );
             return this;
         }

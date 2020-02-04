@@ -29,7 +29,7 @@ namespace App.DL.Model.Project {
         public string description;
 
         public int repository_id;
-
+        
         public DateTime created_at;
 
         public DateTime updated_at;
@@ -155,6 +155,8 @@ namespace App.DL.Model.Project {
         public int StarsCount() => ExecuteScalarInt(
             "SELECT COUNT(*) FROM user_projects_library WHERE project_id = @id", new {id}
         );
+
+        public bool IsConfirmed() => creator_id > 0;
 
         public Image.Image[] Images() => ProjectImage.Get(this).Select(x => x.Image()).ToArray();
 
