@@ -7,6 +7,7 @@ using RepoModel = App.DL.Model.Repo.Repo;
 using UserModel = App.DL.Model.User.User;
 using Dapper;
 using App.DL.Model.Alias;
+using App.DL.Model.Image.Rel;
 using App.DL.Repository.Alias;
 using App.DL.Repository.Project;
 using App.DL.Repository.Product;
@@ -28,7 +29,7 @@ namespace App.DL.Model.Project {
         public string description;
 
         public int repository_id;
-
+        
         public DateTime created_at;
 
         public DateTime updated_at;
@@ -57,7 +58,7 @@ namespace App.DL.Model.Project {
             => Connection().Query<Project>(
                 $"SELECT * FROM projects WHERE {col} = @val LIMIT 50", new {val}
             ).ToArray();
-        
+
         public static Project[] GetBy(string col, int val)
             => Connection().Query<Project>(
                 $"SELECT * FROM projects WHERE {col} = @val LIMIT 50", new {val}
@@ -119,6 +120,17 @@ namespace App.DL.Model.Project {
                 new {project_id = id, limit}
             ).ToArray();
 
+        public Card.Card[] Cards()
+            => Connection().Query<Card.Card>(
+                @"SELECT cards.*
+                FROM projects
+                    LEFT JOIN boards ON projects.id = boards.project_id
+                    LEFT JOIN board_columns ON boards.id = board_columns.board_id
+                    LEFT JOIN cards on board_columns.id = cards.column_id
+                WHERE projects.id = @project_id AND cards.id IS NOT NULL
+                GROUP BY cards.id;", new {project_id = id}
+            ).ToArray();
+
         public ProjectWorkType[] WorkTypes(int limit = 10)
             => Connection().Query<ProjectWorkType>(
                 @"SELECT * FROM project_work_types WHERE project_id = @project_id LIMIT @limit",
@@ -134,8 +146,19 @@ namespace App.DL.Model.Project {
                    , new {project_id = id, user_id = user.id}
                ) > 0;
 
-        public int StarsCount() =>
-            ExecuteScalarInt("SELECT COUNT(*) FROM user_projects_library WHERE project_id = @id", new {id});
+        public static Project[] Paginate(int page, int size = 20)
+            => Connection().Query<Project>(
+                "SELECT * FROM projects OFFSET @offset LIMIT @size",
+                new {offset = ((page - 1) * size), size}
+            ).ToArray();
+
+        public int StarsCount() => ExecuteScalarInt(
+            "SELECT COUNT(*) FROM user_projects_library WHERE project_id = @id", new {id}
+        );
+
+        public bool IsConfirmed() => creator_id > 0;
+
+        public Image.Image[] Images() => ProjectImage.Get(this).Select(x => x.Image()).ToArray();
 
         public ProjectPost[] Posts() => ProjectPost.Get(this);
 

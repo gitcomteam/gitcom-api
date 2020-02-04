@@ -12,7 +12,7 @@ namespace App.DL.Model.Repo {
     public class Repo : Micron.DL.Model.Model {
         public int id;
 
-        public int creator_id;
+        public int? creator_id;
 
         public string guid;
 
@@ -26,7 +26,10 @@ namespace App.DL.Model.Repo {
 
         public DateTime created_at;
 
-        public UserModel Creator() => UserRepository.Find(creator_id);
+        public UserModel Creator() {
+            int creatorId = creator_id ?? 0;
+            return creatorId > 0 ? UserRepository.Find(creatorId) : null;
+        }
 
         public static Repo Find(int id)
             => Connection().Query<Repo>(
@@ -66,7 +69,7 @@ namespace App.DL.Model.Repo {
                         VALUES (@creator_id, @guid, @title, @repo_url, '{serviceType.ToString()}', @origin_id);
                         SELECT currval('repositories_id_seq');"
                 , new {
-                    creator_id = creator.id, guid = Guid.NewGuid().ToString(), title, repo_url = repoUrl, 
+                    creator_id = creator?.id, guid = Guid.NewGuid().ToString(), title, repo_url = repoUrl,
                     origin_id = originId
                 }
             );

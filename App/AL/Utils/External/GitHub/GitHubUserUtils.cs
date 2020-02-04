@@ -11,7 +11,7 @@ namespace App.AL.Utils.External.GitHub {
                 return (false, "");
             }
 
-            var client = new GitHubClient(new ProductHeaderValue("SupportHub"));
+            var client = new GitHubClient(new ProductHeaderValue("GitCom"));
             client.Credentials = new Credentials(serviceAccessToken.access_token);
 
             var githubUser = client.User.Current().Result;

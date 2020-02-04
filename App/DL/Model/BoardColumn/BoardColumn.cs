@@ -56,16 +56,19 @@ namespace App.DL.Model.BoardColumn {
 
         public BoardColumn Refresh() => Find(id);
 
-        public static int Count() => ExecuteScalarInt("SELECT count(*) FROM board_columns WHERE id = @id");
+        public static int Count() => ExecuteScalarInt("SELECT COUNT(*) FROM board_columns WHERE id = @id");
 
         public void Delete() => ExecuteScalarInt("DELETE FROM board_columns WHERE id = @id", new {id});
 
         public BoardModel Board() => BoardModel.Find(board_id);
 
-        public Card.Card[] Cards(int limit = 25)
+        public Card.Card[] Cards(int page = 1, int limit = 25)
             => Connection().Query<Card.Card>(
-                @"SELECT * FROM cards WHERE column_id = @column_id LIMIT @limit",
-                new {column_id = id, limit}
+                @"SELECT * FROM cards WHERE column_id = @column_id OFFSET @offset LIMIT @limit",
+                new {column_id = id, offset = ((page - 1) * limit), limit}
             ).ToArray();
+        
+        public int CardsCount()
+            => ExecuteScalarInt("SELECT COUNT(*) FROM cards WHERE column_id = @id", new { id });
     }
 }

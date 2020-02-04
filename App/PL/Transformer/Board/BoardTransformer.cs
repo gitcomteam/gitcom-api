@@ -11,7 +11,7 @@ namespace App.PL.Transformer.Board {
                 ["name"] = item.name,
                 ["description"] = item.description,
                 ["project_guid"] = item.Project().guid,
-                ["user_guid"] = item.User().guid,
+                ["user_guid"] = item.Creator()?.guid,
                 ["created_at"] = item.created_at.ToString("d"),
                 ["updated_at"] = item.updated_at.ToString("d")
             };

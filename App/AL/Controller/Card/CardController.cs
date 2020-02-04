@@ -7,6 +7,7 @@ using Micron.DL.Middleware;
 using Micron.DL.Module.Controller;
 using Micron.DL.Module.Http;
 using Micron.DL.Module.Validator;
+using Newtonsoft.Json.Linq;
 
 namespace App.AL.Controller.Card {
     public sealed class CardController : BaseController {
@@ -33,8 +34,21 @@ namespace App.AL.Controller.Card {
                 if (errors.Count > 0) return HttpResponse.Errors(errors);
 
                 var column = BoardColumnRepository.FindByGuid(GetRequestStr("column_guid"));
-                
-                return HttpResponse.Item("cards", new CardTransformer().Many(column.Cards()));
+
+                var page = GetRequestInt("page");
+                page = page > 0 ? page : 1;
+
+                var pageSize = 25;
+
+                return HttpResponse.Data(new JObject() {
+                    ["data"] = new JObject() {
+                        ["cards"] = new CardTransformer().Many(column.Cards(page, pageSize))
+                    },
+                    ["meta"] = new JObject() {
+                        ["pages_count"] = (column.CardsCount() / pageSize)+1,
+                        ["current_page"] = page
+                    }
+                });
             });
         }
     }
