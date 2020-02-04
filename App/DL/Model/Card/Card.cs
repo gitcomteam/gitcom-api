@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using App.DL.Model.Work;
+using App.DL.Repository.Project;
 using Dapper;
 using UserModel = App.DL.Model.User.User;
 using BoardColumnModel = App.DL.Model.BoardColumn.BoardColumn;
@@ -79,7 +80,16 @@ namespace App.DL.Model.Card {
 
         public Board.Board Board() => Column().Board();
 
-        public Project.Project Project() => Board().Project();
+        public Project.Project Project() {
+            var projectId = ExecuteScalarInt(@"SELECT projects.id
+                FROM cards
+                LEFT JOIN board_columns ON cards.column_id = board_columns.id
+                LEFT JOIN boards ON board_columns.board_id = boards.id
+                LEFT JOIN projects ON boards.project_id = projects.id
+                WHERE cards.id = @id LIMIT 1;
+            ", new {id});
+            return ProjectRepository.Find(projectId);
+        }
 
         public UserModel Creator() => UserModel.Find(creator_id);
         

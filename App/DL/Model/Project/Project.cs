@@ -120,6 +120,17 @@ namespace App.DL.Model.Project {
                 new {project_id = id, limit}
             ).ToArray();
 
+        public Card.Card[] Cards()
+            => Connection().Query<Card.Card>(
+                @"SELECT cards.*
+                FROM projects
+                    LEFT JOIN boards ON projects.id = boards.project_id
+                    LEFT JOIN board_columns ON boards.id = board_columns.board_id
+                    LEFT JOIN cards on board_columns.id = cards.column_id
+                WHERE projects.id = @project_id AND cards.id IS NOT NULL
+                GROUP BY cards.id;", new {project_id = id}
+            ).ToArray();
+
         public ProjectWorkType[] WorkTypes(int limit = 10)
             => Connection().Query<ProjectWorkType>(
                 @"SELECT * FROM project_work_types WHERE project_id = @project_id LIMIT @limit",
@@ -134,6 +145,12 @@ namespace App.DL.Model.Project {
                     WHERE project_id = @project_id AND user_id = @user_id LIMIT 1"
                    , new {project_id = id, user_id = user.id}
                ) > 0;
+
+        public static Project[] Paginate(int page, int size = 20)
+            => Connection().Query<Project>(
+                "SELECT * FROM projects OFFSET @offset LIMIT @size",
+                new {offset = ((page - 1) * size), size}
+            ).ToArray();
 
         public int StarsCount() => ExecuteScalarInt(
             "SELECT COUNT(*) FROM user_projects_library WHERE project_id = @id", new {id}
