@@ -30,7 +30,7 @@ Check out `swagger.json` file inside repo or view it here: [swagger preview](htt
 ## Directory structure (App project):
 1. `AL` stands for `Application layer` - contains classes like Controllers, Utility classes (basically all business logic)
 2. `DL` stands for `Data layer` - contains models, repositories, custom class bindings etc.
-3. `PL` stands for `Presentation layer` - contanis transformers and everything related to data processing / presentation
+3. `PL` stands for `Presentation layer` - contains transformers and everything related to data processing / presentation
 
 ### Set up to develop locally:
 1. restore nuget packages  
