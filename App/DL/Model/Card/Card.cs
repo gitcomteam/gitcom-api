@@ -52,7 +52,10 @@ namespace App.DL.Model.Card {
             return ExecuteScalarInt(
                 @"INSERT INTO cards(guid, name, description, column_order, column_id, creator_id) 
                 VALUES (@guid, @name, @description, @column_order, @column_id, @creator_id); SELECT currval('cards_id_seq');"
-                , new {guid = Guid.NewGuid().ToString(), name, description, column_order = columnOrder, column_id = column.id, creator_id = creator.id}
+                , new {
+                    guid = Guid.NewGuid().ToString(), name, description, column_order = columnOrder, 
+                    column_id = column.id, creator_id = creator?.id
+                }
             );
         }
 
