@@ -70,7 +70,7 @@ namespace App.DL.Model.Board
 
         public ProjectModel Project() => ProjectModel.Find(project_id);
 
-        public UserModel User() => UserModel.Find(creator_id);
+        public UserModel Creator() => UserModel.Find(creator_id);
 
         public BoardColumn.BoardColumn[] Columns(int limit = 10)
             => Connection().Query<BoardColumn.BoardColumn>(
