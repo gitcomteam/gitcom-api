@@ -8,7 +8,7 @@ using Micron.DL.Module.Validator;
 
 namespace App.AL.Controller.Project {
     public sealed class ProjectController : BaseController {
-        protected override IMiddleware[] Middleware() => new IMiddleware[] {};
+        protected override IMiddleware[] Middleware() => new IMiddleware[] { };
 
         public ProjectController() {
             Get("/api/v1/project/get", _ => {

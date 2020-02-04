@@ -6,6 +6,7 @@ namespace App.PL.Transformer.User {
     public class UserTransformer : BaseTransformer {
         public override JObject Transform(object obj) {
             var item = (UserModel) obj;
+            if (item == null) return null;
             return new JObject {
                 ["guid"] = item.guid,
                 ["login"] = item.login,

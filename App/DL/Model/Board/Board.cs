@@ -49,7 +49,7 @@ namespace App.DL.Model.Board
             return ExecuteScalarInt(
                 @"INSERT INTO boards(guid, name, description, project_id, creator_id) 
                 VALUES (@guid, @name, @description, @project_id, @creator_id); SELECT currval('boards_id_seq');"
-                , new {guid = Guid.NewGuid().ToString(), name, description, project_id = project.id, creator_id = creator.id}
+                , new {guid = Guid.NewGuid().ToString(), name, description, project_id = project.id, creator_id = creator?.id}
             );
         }
 

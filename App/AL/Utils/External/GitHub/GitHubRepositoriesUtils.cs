@@ -63,24 +63,27 @@ namespace App.AL.Utils.External.GitHub {
 
         public static (Project project, Repo repo) ImportProject(User me, string originId) {
             var externalRepo = GetClient().Repository.Get(Convert.ToInt64(originId)).Result;
+            User creator = null;
+            
+            if (me != null) {
+                var token = me.ServiceAccessToken(ServiceType.GitHub);
 
-            var token = me.ServiceAccessToken(ServiceType.GitHub);
+                if (token.origin_user_id == "") {
+                    GitHubUserUtils.UpdateOriginUserId(me);
+                }
 
-            if (token.origin_user_id == "") {
-                GitHubUserUtils.UpdateOriginUserId(me);
+                var originUserId = token.origin_user_id;
+
+                creator = externalRepo.Owner.Id == Convert.ToInt64(originUserId) ? me : null;
             }
 
             Repo repository = RepoRepository.CreateAndGet(
                 me, externalRepo.Name, externalRepo.HtmlUrl, RepoServiceType.GitHub, externalRepo.Id.ToString()
             );
 
-            var originUserId = token.origin_user_id;
-
-            User creator = externalRepo.Owner.Id == Convert.ToInt64(originUserId) ? me : null;
-
             var project = ProjectRepository.FindOrCreate(repository.title, creator, repository);
 
-            project.UpdateCol("description", externalRepo.Description);
+            if (externalRepo.Description != null) project.UpdateCol("description", externalRepo.Description);
             
             return (project, repository);
         }

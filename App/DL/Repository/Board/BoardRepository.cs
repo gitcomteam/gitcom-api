@@ -17,7 +17,7 @@ namespace App.DL.Repository.Board {
             return BoardModel.Find(project, creator);
         }
 
-        public static BoardModel CreateAndGet(string name, string description, ProjectModel project, UserModel user) {
+        public static BoardModel CreateAndGet(string name, string description, ProjectModel project, UserModel user = null) {
             return BoardModel.Find(BoardModel.Create(name, description, project, user));
         }
 
