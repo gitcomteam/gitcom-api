@@ -23,5 +23,12 @@ namespace Tests.App.DL.Model.Card {
             Assert.AreEqual(card.name, name);
             Assert.AreEqual(card.column_id, column.id);
         }
+
+        [Test]
+        public void Project_Ok() {
+            var card = CardFaker.Create();
+            
+            Assert.NotNull(card.Project());
+        }
     }
 }
