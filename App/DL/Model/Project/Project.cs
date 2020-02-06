@@ -29,7 +29,7 @@ namespace App.DL.Model.Project {
         public string description;
 
         public int repository_id;
-        
+
         public DateTime created_at;
 
         public DateTime updated_at;
@@ -74,10 +74,12 @@ namespace App.DL.Model.Project {
                 "SELECT * FROM projects ORDER BY random() LIMIT 10"
             ).ToArray();
 
-        public static Project[] GetNewest()
-            => Connection().Query<Project>(
-                "SELECT * FROM projects ORDER BY id DESC LIMIT 10"
+        public static Project[] GetNewest(int page = 1, int size = 20) {
+            return Connection().Query<Project>(
+                "SELECT * FROM projects ORDER BY id DESC OFFSET @offset LIMIT @size",
+                new {offset = ((page - 1) * size), size}
             ).ToArray();
+        }
 
         public static int Create(string name, UserModel creator = null, RepoModel repo = null) {
             return ExecuteScalarInt(
@@ -120,7 +122,7 @@ namespace App.DL.Model.Project {
                 new {project_id = id, limit}
             ).ToArray();
 
-        public Card.Card[] Cards()
+        public Card.Card[] Cards(int page = 1, int size = 25)
             => Connection().Query<Card.Card>(
                 @"SELECT cards.*
                 FROM projects
@@ -128,7 +130,10 @@ namespace App.DL.Model.Project {
                     LEFT JOIN board_columns ON boards.id = board_columns.board_id
                     LEFT JOIN cards on board_columns.id = cards.column_id
                 WHERE projects.id = @project_id AND cards.id IS NOT NULL
-                GROUP BY cards.id;", new {project_id = id}
+                GROUP BY cards.id
+                OFFSET @offset LIMIT @size;", new {
+                    project_id = id, offset = ((page - 1) * size), size
+                }
             ).ToArray();
 
         public ProjectWorkType[] WorkTypes(int limit = 10)
@@ -163,5 +168,16 @@ namespace App.DL.Model.Project {
         public ProjectPost[] Posts() => ProjectPost.Get(this);
 
         public void Delete() => ExecuteScalarInt("DELETE FROM projects WHERE id = @id", new {id});
+
+        public static int Count() => ExecuteScalarInt("SELECT count(*) FROM projects WHERE id = @id");
+
+        public int CardsCount() => ExecuteScalarInt(
+            @"SELECT COUNT(*)
+             FROM projects
+                      LEFT JOIN boards ON projects.id = boards.project_id
+                      LEFT JOIN board_columns ON boards.id = board_columns.board_id
+                      LEFT JOIN cards on board_columns.id = cards.column_id
+             WHERE projects.id = @project_id AND cards.id IS NOT NULL;", new { project_id = id }
+        );
     }
 }
