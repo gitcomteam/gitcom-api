@@ -41,7 +41,7 @@ namespace App.AL.Controller.Card {
                 var pageSize = 25;
 
                 return HttpResponse.Data(new JObject() {
-                    ["cards"] = new CardTransformer().Many(column.Cards(page, pageSize))
+                    ["cards"] = new CardTransformer().Many(column.Cards(page, pageSize)),
                     ["meta"] = new JObject() {
                         ["pages_count"] = (column.CardsCount() / pageSize)+1,
                         ["current_page"] = page
