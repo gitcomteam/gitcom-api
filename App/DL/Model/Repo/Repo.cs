@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using App.DL.Enum;
+using App.DL.External.GitHub;
 using App.DL.Repository.Repo;
 using App.DL.Repository.User;
 using Dapper;
@@ -82,6 +83,9 @@ namespace App.DL.Model.Repo {
             );
             return this;
         }
+
+        public Octokit.Repository GithubRepo() => 
+            GitHubApi.Client().Repository.Get(Convert.ToInt64(origin_id)).Result;
 
         public Project.Project Project() => Model.Project.Project.FindBy("repository_id", id);
         

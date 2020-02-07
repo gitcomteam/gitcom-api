@@ -9,7 +9,7 @@ namespace Tests.App.DL.Repository.Alias {
         public void Create_DataCorrect_GotAlias() {
             var project = ProjectFaker.Create();
 
-            var alias = ProjectAliasRepository.Create(project, "test owner", "test alias");
+            var alias = ProjectAliasRepository.Create(project);
             
             Assert.NotNull(alias);
             

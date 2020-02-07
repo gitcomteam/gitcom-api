@@ -17,7 +17,8 @@ namespace App.AL.Tasks.Project {
                 ProjectTeamMemberRepository.CreateAndGet(project, creator);
                 UserLibraryItemRepository.FindOrCreate(project.Creator(), project);
             }
-            ProjectAliasRepository.Create(project, project.name);
+            
+            ProjectAliasRepository.Create(project);
             ProjectWorkUtils.SetUp(project);
 
             // Basic boards set up

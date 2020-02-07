@@ -77,6 +77,12 @@ namespace App.DL.Model.Card {
             return this;
         }
         
+        public static Card[] Paginate(int page, int size = 20)
+            => Connection().Query<Card>(
+                "SELECT * FROM cards ORDER BY id DESC OFFSET @offset LIMIT @size",
+                new {offset = ((page - 1) * size), size}
+            ).ToArray();
+        
         public Card UpdateCol(string col, string val) {
             ExecuteSql(
                 $"UPDATE cards SET {col} = @val, updated_at = CURRENT_TIMESTAMP WHERE id = @id",
