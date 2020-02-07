@@ -27,6 +27,22 @@ namespace App.AL.Controller.Card {
                 ));
             });
             
+            Get("/api/v1/cards/get", _ => {
+                var page = GetRequestInt("page");
+                page = page > 0 ? page : 1;
+
+                var pageSize = 25;
+                return HttpResponse.Data(new JObject() {
+                    ["cards"] = new CardTransformer().Many(
+                        DL.Model.Card.Card.Paginate(page, pageSize)
+                    ),
+                    ["meta"] = new JObject() {
+                        ["pages_count"] = (DL.Model.Card.Card.Count() / pageSize)+1,
+                        ["current_page"] = page
+                    }
+                });
+            });
+            
             Get("/api/v1/project/cards/get", _ => {
                 var errors = ValidationProcessor.Process(Request, new IValidatorRule[] {
                     new ShouldHaveParameter("project_guid"),
