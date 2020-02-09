@@ -21,54 +21,55 @@ namespace App.AL.Schedule.Sync.Issues {
 
         public SyncIssues() {
             Post("/api/v1/schedule/issues/sync/start", _ => {
-                var task = Task.Run(() => {
+                var task = Task.Run(async () => {
                     var githubClient = GitHubApi.Client();
 
-                    int pageIndex = 1;
-                    var projects = DL.Model.Project.Project.Paginate(pageIndex);
+                    var projects = DL.Model.Project.Project.GetRandom(50);
 
-                    while (projects.Length > 0) {
-                        foreach (var project in projects) {
-                            var board = project.Boards().First(x => x.name == "Development");
-                            if (board == null) continue;
+                    foreach (var project in projects) {
+                        var board = project.Boards().First(x => x.name == "Development");
+                        if (board == null) continue;
 
-                            var todoColumn = board.Columns().First(c => c.name == "TODO");
-                            if (todoColumn == null) continue;
+                        var todoColumn = board.Columns().First(c => c.name == "TODO");
+                        if (todoColumn == null) continue;
 
-                            try {
-                                var originId = project.Repository().origin_id;
-                                Console.WriteLine($"getting issues for repo {originId}");
-                                var issues = githubClient.Issue.GetAllForRepository(
-                                    Convert.ToInt64(originId)
-                                    , new ApiOptions() {
-                                        PageSize = 100
-                                    }
-                                ).Result;
-                                foreach (var issue in issues) {
-                                    try {
-                                        Console.WriteLine($"Checking issue {issue.HtmlUrl}");
-                                        var existingCard = Card.FindBy("origin_id", issue.Id.ToString());
-                                        if (existingCard != null) continue;
-                                        var card = CardRepository.CreateAndGet(
-                                            issue.Title, issue.Body ?? "", 1, todoColumn, null
-                                        );
-                                        card.UpdateCol("origin_id", issue.Id.ToString());
-                                    }
-                                    catch (Exception e) {
-                                        Console.WriteLine(e.Message);
-                                    }
+                        try {
+                            var originId = project.Repository().origin_id;
+                            var issues = githubClient.Issue.GetAllForRepository(
+                                Convert.ToInt64(originId)
+                                , new ApiOptions() {
+                                    PageSize = 100
+                                }
+                            ).Result;
+                            foreach (var issue in issues) {
+                                try {
+                                    var existingCard = Card.FindBy("origin_id", issue.Id.ToString());
+                                    if (existingCard != null) continue;
+                                    var card = CardRepository.CreateAndGet(
+                                        issue.Title, issue.Body ?? "", 1, todoColumn, null
+                                    );
+                                    card.UpdateCol("origin_id", issue.Id.ToString());
+                                }
+                                catch (Exception e) {
+                                    Console.WriteLine(e.Message);
                                 }
                             }
-                            catch (Exception e) {
-                                Console.WriteLine(e.Message);
+                        }
+                        catch (AggregateException e) {
+                            if (e.Message.Contains("API rate limit")) {
+                                Console.WriteLine("waiting");
+                                await Task.Delay(GitHubApi.TimeUntilReset() * 1000);
+                            }
+                            else {
                                 SentrySdk.CaptureException(e);
                             }
                         }
-
-                        ++pageIndex;
-                        projects = DL.Model.Project.Project.Paginate(pageIndex);
+                        catch (Exception e) {
+                            Console.WriteLine(e.Message);
+                            SentrySdk.CaptureException(e);
+                        }
                     }
-                    
+
                     Console.WriteLine("Finished!");
                 });
                 JobsPool.Get().Push(task);
