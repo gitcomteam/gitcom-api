@@ -69,9 +69,9 @@ namespace App.DL.Model.Project {
                 "SELECT * FROM projects WHERE id = @id ORDER BY random() LIMIT 1"
             ).FirstOrDefault();
 
-        public static Project[] GetRandom()
+        public static Project[] GetRandom(int limit = 10)
             => Connection().Query<Project>(
-                "SELECT * FROM projects ORDER BY random() LIMIT 10"
+                "SELECT * FROM projects ORDER BY random() LIMIT @limit", new {limit}
             ).ToArray();
 
         public static Project[] GetNewest(int page = 1, int size = 20) {
