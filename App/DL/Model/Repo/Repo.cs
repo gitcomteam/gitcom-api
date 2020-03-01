@@ -55,6 +55,11 @@ namespace App.DL.Model.Repo {
                 $"SELECT * FROM repositories WHERE origin_id = @origin_id AND service_type = '{type.ToString()}' LIMIT 1",
                 new {origin_id = originId}
             ).FirstOrDefault();
+        
+       public static Repo[] GetRandom(int limit = 10)
+           => Connection().Query<Repo>(
+               "SELECT * FROM repositories ORDER BY random() LIMIT @limit", new {limit}
+           ).ToArray();
 
         public static Repo[] Paginate(int page, int size = 20)
             => Connection().Query<Repo>(
@@ -84,8 +89,10 @@ namespace App.DL.Model.Repo {
             return this;
         }
 
-        public Octokit.Repository GithubRepo() => 
-            GitHubApi.Client().Repository.Get(Convert.ToInt64(origin_id)).Result;
+        public Octokit.Repository GithubRepo() {
+            var originId = origin_id == "" ? "0" : origin_id;
+            return GitHubApi.Client().Repository.Get(Convert.ToInt64(origin_id)).Result;
+        }
 
         public Project.Project Project() => Model.Project.Project.FindBy("repository_id", id);
         

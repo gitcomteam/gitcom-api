@@ -1,3 +1,4 @@
+using App.AL.Utils.External.Discord;
 using App.DL.Enum;
 using App.DL.Model.Funding;
 using App.DL.Model.User;
@@ -58,7 +59,7 @@ namespace App.DL.Repository.User {
             }
             
             user ??= Create(email, login, password);
-
+            
             UserBadge.Create(user, "Early adopter");
 
             int tokenRegisterBonus = System.Convert.ToInt32(
@@ -78,7 +79,9 @@ namespace App.DL.Repository.User {
         }
 
         public static UserModel Create(string email, string login, string password) {
-            return Find(UserModel.Create(email, login, password));
+            var newUserId = UserModel.Create(email, login, password);
+            DiscordWebhooks.SendEvent("system-events", $"New user #{newUserId} just signed up! Email: {email}");
+            return Find(newUserId);
         }
     }
 }

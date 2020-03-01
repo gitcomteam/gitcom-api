@@ -1,6 +1,5 @@
 using System;
 using App.DL.Module.Cache;
-using Micron.DL.Model;
 
 namespace App.AL {
     public static class AppBoot {
