@@ -66,7 +66,7 @@ jobs:
 
       - run:
           name: copy app config
-          command: mkdir -p Tests/bin/Debug/netcoreapp2.2/config && cp .circleci/config.json.testing Tests/bin/Debug/netcoreapp2.2/config/config.json
+          command: mkdir -p Tests/bin/Debug/netcoreapp2.2/config && cp .circleci/config.testing.json Tests/bin/Debug/netcoreapp2.2/config/config.json
 
       - run:
           name: yum install dotnet core sdk 2.2

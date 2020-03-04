@@ -1,6 +1,11 @@
+using App.AL.Utils.External.Discord;
+using App.DL.Enum;
+using App.DL.Model.Funding;
+using App.DL.Model.User;
 using App.DL.Model.User.Badge;
 using App.DL.Module.Cache;
 using App.DL.Repository.User.Referral;
+using Micron.DL.Module.Config;
 using Micron.DL.Module.Misc;
 using UserModel = App.DL.Model.User.User;
 
@@ -54,8 +59,19 @@ namespace App.DL.Repository.User {
             }
             
             user ??= Create(email, login, password);
-
+            
             UserBadge.Create(user, "Early adopter");
+
+            int tokenRegisterBonus = System.Convert.ToInt32(
+                AppConfig.GetConfiguration("user:registration:token_bonus")
+            );
+
+            if (tokenRegisterBonus > 0) {
+                UserBalance.Create(user, CurrencyType.GitComToken, tokenRegisterBonus);
+                FundingTransaction.Create(
+                    user, user.id, EntityType.User, null, tokenRegisterBonus, CurrencyType.GitComToken
+                );
+            }
 
             if (referral != null) UserReferralRepository.Create(user, referral);
             
@@ -63,7 +79,9 @@ namespace App.DL.Repository.User {
         }
 
         public static UserModel Create(string email, string login, string password) {
-            return Find(UserModel.Create(email, login, password));
+            var newUserId = UserModel.Create(email, login, password);
+            DiscordWebhooks.SendEvent("system-events", $"New user #{newUserId} just signed up! Email: {email}");
+            return Find(newUserId);
         }
     }
 }

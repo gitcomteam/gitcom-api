@@ -8,7 +8,7 @@ namespace App.PL.Transformer.User.Badge {
             var item = (UserBadge) obj;
             return new JObject() {
                 ["guid"] = item.guid,
-                ["user_guid"] = item.User().id,
+                ["user_guid"] = item.User().guid,
                 ["badge"] = item.badge,
                 ["created_at"] = item.created_at.ToString("d"),
             };

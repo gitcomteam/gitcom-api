@@ -11,13 +11,17 @@
         "jwt": {
             "secret_key": "GQDsD21j8s2zdm12F1f1k12",
             "token_life_days": 7
-        }
+        },
+	"schedule": {
+	    "token": "fk1092fk21"
+	}
     },
-    "Logging": {
-        "LogLevel": {
-            "Default": "Debug",
-            "System": "Information",
-            "Microsoft": "Information"
+    "schedule": {
+        "token": "F2l901f"
+    },
+    "user": {
+        "registration": {
+                "token_bonus": 500
         }
     }
 }

@@ -15,7 +15,7 @@ namespace App.PL.Transformer.Card
                 ["guid"] = item.guid,
                 ["name"] = item.name,
                 ["description"] = item.description,
-                ["creator_guid"] = item.Creator().guid,
+                ["creator_guid"] = item.Creator()?.guid,
                 ["column_order"] = item.column_order,
                 ["column_guid"] = item.Column().guid,
                 ["created_at"] = item.created_at,

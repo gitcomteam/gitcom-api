@@ -21,7 +21,7 @@ namespace App.AL.Controller.External {
                 JObject githubUser = null;
 
                 if (githubToken != null) {
-                    var githubClient = new GitHubClient(new ProductHeaderValue("SupportHub"));
+                    var githubClient = new GitHubClient(new ProductHeaderValue("GitCom"));
                 
                     githubClient.Credentials = new Credentials(githubToken.access_token);
 

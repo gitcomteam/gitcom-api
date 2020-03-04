@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using App.DL.Model.Work;
+using App.DL.Repository.Project;
 using Dapper;
 using UserModel = App.DL.Model.User.User;
 using BoardColumnModel = App.DL.Model.BoardColumn.BoardColumn;
@@ -22,6 +23,8 @@ namespace App.DL.Model.Card {
         public int column_order;
 
         public int column_id;
+
+        public string origin_id;
 
         public DateTime created_at;
 
@@ -45,6 +48,11 @@ namespace App.DL.Model.Card {
                 }
             ).FirstOrDefault();
         }
+        
+        public static Card FindBy(string col, string val)
+            => Connection().Query<Card>(
+                $"SELECT * FROM cards WHERE {col} = @val LIMIT 1", new {val}
+            ).FirstOrDefault();
 
         public static int Create(
             string name, string description, int columnOrder, BoardColumnModel column, UserModel creator
@@ -52,7 +60,10 @@ namespace App.DL.Model.Card {
             return ExecuteScalarInt(
                 @"INSERT INTO cards(guid, name, description, column_order, column_id, creator_id) 
                 VALUES (@guid, @name, @description, @column_order, @column_id, @creator_id); SELECT currval('cards_id_seq');"
-                , new {guid = Guid.NewGuid().ToString(), name, description, column_order = columnOrder, column_id = column.id, creator_id = creator.id}
+                , new {
+                    guid = Guid.NewGuid().ToString(), name, description, column_order = columnOrder, 
+                    column_id = column.id, creator_id = creator?.id
+                }
             );
         }
 
@@ -62,6 +73,28 @@ namespace App.DL.Model.Card {
                 SET name = @name, description = @description, column_order = @column_order, column_id = @column_id
                 WHERE id = @id",
                 new {name, description, column_order, column_id, id}
+            );
+            return this;
+        }
+        
+        public static Card[] Paginate(int page, int size = 20)
+            => Connection().Query<Card>(
+                "SELECT * FROM cards ORDER BY id DESC OFFSET @offset LIMIT @size",
+                new {offset = ((page - 1) * size), size}
+            ).ToArray();
+        
+        public Card UpdateCol(string col, string val) {
+            ExecuteSql(
+                $"UPDATE cards SET {col} = @val, updated_at = CURRENT_TIMESTAMP WHERE id = @id",
+                new {val, id}
+            );
+            return this;
+        }
+        
+        public Card UpdateCol(string col, int val) {
+            ExecuteSql(
+                $"UPDATE cards SET {col} = @val, updated_at = CURRENT_TIMESTAMP WHERE id = @id",
+                new {val, id}
             );
             return this;
         }
@@ -76,7 +109,16 @@ namespace App.DL.Model.Card {
 
         public Board.Board Board() => Column().Board();
 
-        public Project.Project Project() => Board().Project();
+        public Project.Project Project() {
+            var projectId = ExecuteScalarInt(@"SELECT projects.id
+                FROM cards
+                LEFT JOIN board_columns ON cards.column_id = board_columns.id
+                LEFT JOIN boards ON board_columns.board_id = boards.id
+                LEFT JOIN projects ON boards.project_id = projects.id
+                WHERE cards.id = @id LIMIT 1;
+            ", new {id});
+            return ProjectRepository.Find(projectId);
+        }
 
         public UserModel Creator() => UserModel.Find(creator_id);
         

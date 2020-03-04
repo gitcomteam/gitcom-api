@@ -13,6 +13,7 @@ namespace App.PL.Transformer.Project {
                 ["creator_guid"] = item.Creator()?.guid,
                 ["base_uri"] = null,
                 ["stars_count"] = item.StarsCount(), // TODO: optimize
+                ["confirmed"] = item.IsConfirmed(),
                 ["created_at"] = item.created_at.ToString("d"),
                 ["updated_at"] = item.created_at.ToString("d")
             };

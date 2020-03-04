@@ -13,8 +13,12 @@ namespace App.AL.Tasks.Project {
         "after each task is finished all funding will be disctributed across all participants based on their effort";
         
         public static void Run(DL.Model.Project.Project project, User creator) {
-            ProjectTeamMemberRepository.CreateAndGet(project, creator);
-            ProjectAliasRepository.Create(project, creator.login);
+            if (creator != null) {
+                ProjectTeamMemberRepository.CreateAndGet(project, creator);
+                UserLibraryItemRepository.FindOrCreate(project.Creator(), project);
+            }
+            
+            ProjectAliasRepository.Create(project);
             ProjectWorkUtils.SetUp(project);
 
             // Basic boards set up
@@ -25,7 +29,6 @@ namespace App.AL.Tasks.Project {
             CardRepository.CreateAndGet(
                 "Example card", DefaultCardDescription, 1, todoColumn, creator
             );
-            UserLibraryItemRepository.FindOrCreate(project.Creator(), project);
         }
     }
 }

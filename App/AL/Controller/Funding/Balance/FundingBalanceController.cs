@@ -2,7 +2,6 @@ using App.AL.Utils.Entity;
 using App.AL.Validation.Entity;
 using App.DL.Enum;
 using App.DL.Repository.Funding;
-using App.DL.Repository.User;
 using App.PL.Transformer.Funding;
 using Micron.AL.Validation.Basic;
 using Micron.AL.Validation.String;

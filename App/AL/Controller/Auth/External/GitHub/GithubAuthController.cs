@@ -59,7 +59,7 @@ namespace App.AL.Controller.Auth.external.github {
                         "We're unable to get your access token, please try again");
                 }
 
-                var githubClient = new GitHubClient(new ProductHeaderValue("SupportHub"));
+                var githubClient = new GitHubClient(new ProductHeaderValue("GitCom"));
 
                 githubClient.Credentials = new Credentials(accessToken);
 

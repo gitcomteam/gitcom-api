@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using App.DL.Enum;
+using App.DL.External.GitHub;
 using App.DL.Repository.Repo;
 using App.DL.Repository.User;
 using Dapper;
@@ -12,7 +13,7 @@ namespace App.DL.Model.Repo {
     public class Repo : Micron.DL.Model.Model {
         public int id;
 
-        public int creator_id;
+        public int? creator_id;
 
         public string guid;
 
@@ -26,7 +27,10 @@ namespace App.DL.Model.Repo {
 
         public DateTime created_at;
 
-        public UserModel Creator() => UserRepository.Find(creator_id);
+        public UserModel Creator() {
+            int creatorId = creator_id ?? 0;
+            return creatorId > 0 ? UserRepository.Find(creatorId) : null;
+        }
 
         public static Repo Find(int id)
             => Connection().Query<Repo>(
@@ -51,6 +55,11 @@ namespace App.DL.Model.Repo {
                 $"SELECT * FROM repositories WHERE origin_id = @origin_id AND service_type = '{type.ToString()}' LIMIT 1",
                 new {origin_id = originId}
             ).FirstOrDefault();
+        
+       public static Repo[] GetRandom(int limit = 10)
+           => Connection().Query<Repo>(
+               "SELECT * FROM repositories ORDER BY random() LIMIT @limit", new {limit}
+           ).ToArray();
 
         public static Repo[] Paginate(int page, int size = 20)
             => Connection().Query<Repo>(
@@ -66,7 +75,7 @@ namespace App.DL.Model.Repo {
                         VALUES (@creator_id, @guid, @title, @repo_url, '{serviceType.ToString()}', @origin_id);
                         SELECT currval('repositories_id_seq');"
                 , new {
-                    creator_id = creator.id, guid = Guid.NewGuid().ToString(), title, repo_url = repoUrl, 
+                    creator_id = creator?.id, guid = Guid.NewGuid().ToString(), title, repo_url = repoUrl,
                     origin_id = originId
                 }
             );
@@ -78,6 +87,11 @@ namespace App.DL.Model.Repo {
                 new {title, repo_url, id}
             );
             return this;
+        }
+
+        public Octokit.Repository GithubRepo() {
+            var originId = Convert.ToInt64(origin_id == "" ? "0" : origin_id);
+            return GitHubApi.Client().Repository.Get(originId).Result;
         }
 
         public Project.Project Project() => Model.Project.Project.FindBy("repository_id", id);

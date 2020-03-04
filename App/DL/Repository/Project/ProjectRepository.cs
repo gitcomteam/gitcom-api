@@ -24,7 +24,7 @@ namespace App.DL.Repository.Project {
 
         public static ProjectModel[] GetRandom() => ProjectModel.GetRandom();
 
-        public static ProjectModel[] GetNewest() => ProjectModel.GetNewest();
+        public static ProjectModel[] GetNewest(int page, int pageSize) => ProjectModel.GetNewest(page, pageSize);
 
         public static ProjectModel FindOrCreate(string name, UserModel creator, RepoModel repository) {
             var project = ProjectModel.FindBy("repository_id", repository.id) ??

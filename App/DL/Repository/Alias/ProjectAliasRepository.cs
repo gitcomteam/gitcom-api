@@ -22,10 +22,16 @@ namespace App.DL.Repository.Alias {
             return ProjectAlias.FindBy("project_id", project.id);
         }
 
-        public static ProjectAlias Create(Model.Project.Project project, string owner, string alias = null) {
-            owner = owner.Replace(" ", "").ToLower();
-            alias ??= project.name.Replace(" ", "").ToLower();
-            
+        public static ProjectAlias Create(Model.Project.Project project) {
+            var alias = PrepareAlias(project.name);
+
+            var creator = project.Creator();
+
+            var owner = creator != null ? PrepareAlias(creator.login) : "_";
+            #if !DEBUG
+            if (creator == null) owner = PrepareAlias(project.Repository().GithubRepo().Owner.Login);
+            #endif
+
             var newAlias = alias;
             var postfix = 0;
             while (FindByAlias(owner, newAlias) != null) {
@@ -34,5 +40,7 @@ namespace App.DL.Repository.Alias {
             }
             return Find(ProjectAlias.Create(project, owner, newAlias));
         }
+        
+        private static string PrepareAlias(string input) => input.Replace(" ", "").ToLower();
     }
 }
