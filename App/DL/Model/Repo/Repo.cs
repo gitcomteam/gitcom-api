@@ -90,8 +90,8 @@ namespace App.DL.Model.Repo {
         }
 
         public Octokit.Repository GithubRepo() {
-            var originId = origin_id == "" ? "0" : origin_id;
-            return GitHubApi.Client().Repository.Get(Convert.ToInt64(origin_id)).Result;
+            var originId = Convert.ToInt64(origin_id == "" ? "0" : origin_id);
+            return GitHubApi.Client().Repository.Get(originId).Result;
         }
 
         public Project.Project Project() => Model.Project.Project.FindBy("repository_id", id);
