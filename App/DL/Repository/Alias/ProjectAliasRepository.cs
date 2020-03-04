@@ -26,8 +26,11 @@ namespace App.DL.Repository.Alias {
             var alias = PrepareAlias(project.name);
 
             var creator = project.Creator();
-            var owner = creator != null ? 
-                PrepareAlias(creator.login) : PrepareAlias(project.Repository().GithubRepo().Owner.Login);
+
+            var owner = creator != null ? PrepareAlias(creator.login) : "_";
+            #if !DEBUG
+            if (creator == null) owner = PrepareAlias(project.Repository().GithubRepo().Owner.Login);
+            #endif
 
             var newAlias = alias;
             var postfix = 0;

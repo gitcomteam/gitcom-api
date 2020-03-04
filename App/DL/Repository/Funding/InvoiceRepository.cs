@@ -1,3 +1,4 @@
+using App.AL.Utils.External.Discord;
 using App.DL.Enum;
 using App.DL.Model.Funding;
 using App.DL.Repository.User;
@@ -18,7 +19,9 @@ namespace App.DL.Repository.Funding {
                     UserBalanceRepository.FindOrCreate(user, currencyType);
                     break;
             }
-            return Find(Invoice.Create(user, entityId, entityType, amount, currencyType, status, wallet));
+            var invoice = Find(Invoice.Create(user, entityId, entityType, amount, currencyType, status, wallet));
+            DiscordWebhooks.SendEvent("system-events", $"New invoice #{invoice.id} was created for user: {invoice.user_id}");
+            return invoice;
         }
 
         public static Invoice UpdateStatus(Invoice invoice, InvoiceStatus status) {

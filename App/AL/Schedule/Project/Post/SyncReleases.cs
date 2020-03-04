@@ -28,46 +28,40 @@ namespace App.AL.Schedule.Project.Post {
                     var githubToken = AppConfig.GetConfiguration("auth:external:github:token");
                     if (githubToken != null) githubClient.Credentials = new Credentials(githubToken);
 
-                    int pageIndex = 1;
-                    var repos = Repo.Paginate(pageIndex);
+                    var repos = Repo.GetRandom(50);
 
-                    while (repos.Length > 0) {
-                        foreach (var repo in repos) {
+                    foreach (var repo in repos) {
+                        try {
+                            if (repo.service_type != RepoServiceType.GitHub) continue;
+                            var splitUrl = repo.repo_url.Split("/");
+                            IEnumerable<Release> releases;
                             try {
-                                if (repo.service_type != RepoServiceType.GitHub) continue;
-                                var splitUrl = repo.repo_url.Split("/");
-                                IEnumerable<Release> releases;
-                                try {
-                                    releases = githubClient.Repository.Release.GetAll(
-                                        splitUrl[3], splitUrl[4]
-                                    ).Result.OrderBy(x => x.Id);
-                                }
-                                catch (Exception e) {
-                                    continue; // ignored
-                                }
-
-                                foreach (var release in releases) {
-                                    if (release.Body.Length < 100) continue;
-
-                                    var existingPost = ProjectPost.FindBy("origin_id", release.Id.ToString());
-                                    if (existingPost != null) continue;
-
-                                    var post = ProjectPost.Create(
-                                        repo.Project(), $"Released {release.Name}", release.Body
-                                    );
-                                    post.UpdateCol("origin_id", release.Id.ToString());
-                                    post.UpdateCol(
-                                        "created_at", release.PublishedAt.Value.ToUnixTimeSeconds().ToString()
-                                    );
-                                }
+                                releases = githubClient.Repository.Release.GetAll(
+                                    splitUrl[3], splitUrl[4]
+                                ).Result.OrderBy(x => x.Id);
                             }
                             catch (Exception e) {
-                                SentrySdk.CaptureException(e);
+                                continue; // ignored
+                            }
+
+                            foreach (var release in releases) {
+                                if (release.Body.Length < 100) continue;
+
+                                var existingPost = ProjectPost.FindBy("origin_id", release.Id.ToString());
+                                if (existingPost != null) continue;
+
+                                var post = ProjectPost.Create(
+                                    repo.Project(), $"Released {release.Name}", release.Body
+                                );
+                                post.UpdateCol("origin_id", release.Id.ToString());
+                                post.UpdateCol(
+                                    "created_at", release.PublishedAt.Value.ToUnixTimeSeconds().ToString()
+                                );
                             }
                         }
-
-                        ++pageIndex;
-                        repos = Repo.Paginate(pageIndex);
+                        catch (Exception e) {
+                            SentrySdk.CaptureException(e);
+                        }
                     }
                 });
                 JobsPool.Get().Push(task);
