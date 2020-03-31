@@ -20,6 +20,7 @@ df -h
 free -m
 
 docker images -q |xargs docker rmi -f
+docker system prune -a -f
 
 sleep 2
 
