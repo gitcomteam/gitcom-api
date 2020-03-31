@@ -2,7 +2,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using App.AL.Middleware.Schedule;
+using App.DL.Enum;
 using App.DL.External.GitHub;
+using App.DL.Model.Auth;
 using App.DL.Model.Card;
 using App.DL.Module.Schedule;
 using App.DL.Repository.Card;
@@ -22,7 +24,7 @@ namespace App.AL.Schedule.Sync.Issues {
         public SyncIssues() {
             Post("/api/v1/schedule/issues/sync/start", _ => {
                 var task = Task.Run(async () => {
-                    var githubClient = GitHubApi.Client();
+                    var githubClient = ClientWithRandomToken();
 
                     var projects = DL.Model.Project.Project.GetRandom(50);
 
@@ -57,7 +59,8 @@ namespace App.AL.Schedule.Sync.Issues {
                         }
                         catch (AggregateException e) {
                             if (e.Message.Contains("API rate limit")) {
-                                Console.WriteLine("waiting");
+                                Console.WriteLine("waiting and trying to use different token");
+                                githubClient = ClientWithRandomToken();
                                 await Task.Delay(GitHubApi.TimeUntilReset() * 1000);
                             }
                             else {
@@ -75,6 +78,11 @@ namespace App.AL.Schedule.Sync.Issues {
                 JobsPool.Get().Push(task);
                 return HttpResponse.Data(new JObject());
             });
+        }
+
+        private GitHubClient ClientWithRandomToken() {
+            var githubToken = ServiceAccessToken.FindRandom(ServiceType.GitHub);
+            return GitHubApi.Client(githubToken != null ? githubToken.access_token : "");
         }
     }
 }

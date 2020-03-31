@@ -6,7 +6,8 @@
         <LangVersion>8</LangVersion>
         <Nullable>enable</Nullable>
         <AssemblyVersion>0.19.0</AssemblyVersion>
-        <FileVersion></FileVersion>
+	<FileVersion></FileVersion>
+	<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
     </PropertyGroup>
 
     <ItemGroup>

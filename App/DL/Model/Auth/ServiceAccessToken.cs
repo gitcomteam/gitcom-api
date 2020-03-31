@@ -41,6 +41,12 @@ namespace App.DL.Model.Auth {
                 new {user_id = user.id}
             ).FirstOrDefault();
         
+        public static ServiceAccessToken FindRandom(ServiceType serviceType)
+            => Connection().Query<ServiceAccessToken>(
+                $"SELECT * FROM service_access_tokens WHERE service_type = '{serviceType.ToString()}' ORDER BY random() LIMIT 1",
+                new {}
+            ).FirstOrDefault();
+        
         public ServiceAccessToken UpdateToken(string accessToken) {
             ExecuteSql(
                 "UPDATE service_access_tokens SET access_token = @access_token, updated_at = CURRENT_TIMESTAMP WHERE id = @id", 

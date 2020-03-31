@@ -6,9 +6,9 @@ using Octokit;
 
 namespace App.DL.External.GitHub {
     public static class GitHubApi {
-        public static GitHubClient Client() {
+        public static GitHubClient Client(string token = "") {
             var client = new GitHubClient(new ProductHeaderValue("GitCom"));
-            var githubToken = Token();
+            var githubToken = string.IsNullOrEmpty(token) ? Token() : token;
             if (githubToken != null) client.Credentials = new Credentials(githubToken);
             return client;
         }
