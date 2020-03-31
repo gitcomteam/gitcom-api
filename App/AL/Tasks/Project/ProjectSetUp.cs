@@ -3,7 +3,6 @@ using App.DL.Model.User;
 using App.DL.Repository.Alias;
 using App.DL.Repository.Board;
 using App.DL.Repository.BoardColumn;
-using App.DL.Repository.Card;
 using App.DL.Repository.ProjectTeamMember;
 using App.DL.Repository.UserLibrary;
 
@@ -26,9 +25,6 @@ namespace App.AL.Tasks.Project {
             var todoColumn = BoardColumnRepository.CreateAndGet("TODO", board, 1);
             BoardColumnRepository.CreateAndGet("In progress", board, 2);
             BoardColumnRepository.CreateAndGet("Done", board, 3);
-            CardRepository.CreateAndGet(
-                "Example card", DefaultCardDescription, 1, todoColumn, creator
-            );
         }
     }
 }
