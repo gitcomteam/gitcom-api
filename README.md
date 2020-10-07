@@ -55,9 +55,7 @@ Tests/bin/Debug/netcoreapp2.2/config/config.json
 
 ### Contribution:
 Thank you for considering contributing to this repo, feel free to open a PR with any improvement, feature or bugfix.  
-All bugfixes should go into `release/patch` branch  
-All new features should go into `release/minor` branch  
-All breaking changes should be in `release/major` branch  
+All pull requests should go into `dev` branch 
  
 ### Contribution rewards
 For each merged PR you will be rewarded with `contributor` badge and 2500 (or more) GitCom tokens which are tradeable on [Waves Decentralized exchange](https://waves.exchange/dex-demo?assetId2=BkuYDLDunSy7dvep7NgQcmiY4iyqTq3diHwdGPrFUCMC&assetId1=WAVES) (You will need to have a Waves wallet to be able to receive tokens)
